@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<carf:CARF_OECD xmlns:carf="urn:oecd:ties:carf:v1" xmlns:stf="urn:oecd:ties:carfstf:v5" version="1.4">
+  <carf:MessageSpec>
+    <carf:SendingEntityIN>0123456789012345</carf:SendingEntityIN>
+    <carf:TransmittingCountry>ID</carf:TransmittingCountry>
+    <carf:ReceivingCountry>ID</carf:ReceivingCountry>
+    <carf:MessageType>CARF</carf:MessageType>
+    <carf:Contact>compliance@adag.example.id</carf:Contact>
+    <carf:MessageRefId>ID2026ID-ADAG-000002</carf:MessageRefId>
+    <carf:MessageTypeIndic>CARF703</carf:MessageTypeIndic>
+    <carf:ReportingPeriod>2026-12-31</carf:ReportingPeriod>
+    <carf:Timestamp>2027-03-15T09:45:30</carf:Timestamp>
+  </carf:MessageSpec>
+  <carf:CARFBody>
+    <carf:RCASP><carf:RCASP_ID><carf:Entity><carf:ResCountryCode>ID</carf:ResCountryCode><carf:TIN issuedBy="ID">0123456789012345</carf:TIN><carf:Name>PT Aset Kripto ADAG Indonesia</carf:Name><carf:Address legalAddressType="OECD304"><carf:CountryCode>ID</carf:CountryCode><carf:AddressFix><carf:City>Jakarta Selatan</carf:City></carf:AddressFix></carf:Address></carf:Entity></carf:RCASP_ID><carf:Nexus>CARF901</carf:Nexus><carf:DocSpec><stf:DocTypeIndic>OECD1</stf:DocTypeIndic><stf:DocRefId>ID2026ADAG-R-0002</stf:DocRefId></carf:DocSpec></carf:RCASP>
+  </carf:CARFBody>
+</carf:CARF_OECD>
