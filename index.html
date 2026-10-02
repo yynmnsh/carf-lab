@@ -1,0 +1,2324 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CARF Lab — Skema Ganda &amp; Validasi Berlapis Laporan CARF</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1b2a41; --ink-2:#4a5a70; --paper:#ffffff; --paper-2:#f4f6f9; --rule:#d9dee7;
+  --navy:#1f3a5f; --gold:#e3a81c; --gold-soft:#fff4d6; --red:#b23a3a; --red-soft:#fbe9e9;
+  --green:#2b7a4b; --green-soft:#e6f3ea; --blue-soft:#e8eef7; --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink);font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:15.5px;line-height:1.55}
+a{color:var(--navy)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+header.hero{border-bottom:1px solid var(--rule);background:linear-gradient(180deg,#fbfcfe 0%,#ffffff 100%)}
+header.hero .wrap{padding:44px 28px 30px;display:grid;grid-template-columns:1.25fr 1fr;gap:40px;align-items:end}
+h1{font-size:34px;line-height:1.15;margin:0 0 14px;font-weight:600;letter-spacing:-.01em}
+.lede{font-size:17px;color:var(--ink-2);max-width:62ch;margin:0}
+.meta{font-size:13px;color:var(--ink-2);margin-top:18px}
+.meta b{color:var(--ink);font-weight:500}
+.status-card{border:1px solid var(--rule);border-radius:10px;padding:18px 20px;background:var(--paper-2);font-size:14px}
+.status-card dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 14px}
+.status-card dt{color:var(--ink-2)} .status-card dd{margin:0;font-family:var(--mono);font-size:13px}
+nav.tabs{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--rule);z-index:5}
+nav.tabs .wrap{display:flex;gap:4px;overflow-x:auto}
+nav.tabs button{appearance:none;border:0;background:transparent;padding:14px 16px;font:inherit;font-weight:500;color:var(--ink-2);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+nav.tabs button.active{color:var(--ink);border-bottom-color:var(--gold)}
+section.panel{display:none;padding:34px 0 50px}
+section.panel.active{display:block}
+h2{font-size:24px;margin:0 0 8px;font-weight:600}
+h3{font-size:17px;margin:26px 0 8px;font-weight:600}
+p.note{color:var(--ink-2);max-width:72ch;margin:0 0 18px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.card{border:1px solid var(--rule);border-radius:10px;padding:18px 20px;background:#fff}
+.card.tint{background:var(--paper-2)}
+.card h4{margin:0 0 8px;font-size:15px;font-weight:600}
+pre,code{font-family:var(--mono)}
+pre{background:#0f1a2b;color:#e6edf6;border-radius:8px;padding:14px 16px;font-size:12.5px;line-height:1.5;overflow:auto;max-height:420px;margin:0}
+pre .add{background:#1f4d2e;color:#d6f5de;display:block}
+pre .ctx{color:#9fb0c7}
+code.inline{background:var(--paper-2);border:1px solid var(--rule);padding:1px 6px;border-radius:5px;font-size:13px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{border-bottom:1px solid var(--rule);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--paper-2);font-weight:600}
+td.mono,th.mono{font-family:var(--mono);font-size:12.5px}
+.pill{display:inline-block;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:500;font-family:var(--mono)}
+.pill.err{background:var(--red-soft);color:var(--red)} .pill.warn{background:var(--gold-soft);color:#8a6200} .pill.ok{background:var(--green-soft);color:var(--green)} .pill.info{background:var(--blue-soft);color:var(--navy)}
+.toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:14px 0 20px}
+select,button.btn,label.file{font:inherit;font-size:14px;border:1px solid var(--rule);border-radius:8px;padding:9px 14px;background:#fff;color:var(--ink);cursor:pointer}
+button.btn.primary{background:var(--navy);color:#fff;border-color:var(--navy)}
+label.file input{display:none}
+.summary{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:18px 0}
+.summary .box{border:1px solid var(--rule);border-radius:10px;padding:12px 14px}
+.summary .box .n{font-size:28px;font-weight:600;line-height:1.1}
+.summary .box .l{font-size:12.5px;color:var(--ink-2)}
+.summary .box.err .n{color:var(--red)} .summary .box.warn .n{color:#8a6200} .summary .box.ok .n{color:var(--green)}
+.verdict{border-radius:10px;padding:14px 18px;font-weight:500;margin:10px 0 18px}
+.verdict.rej{background:var(--red-soft);color:var(--red)} .verdict.acc{background:var(--green-soft);color:var(--green)}
+.layer{border:1px solid var(--rule);border-radius:10px;margin-bottom:12px;overflow:hidden}
+.layer header{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:var(--paper-2);cursor:pointer}
+.layer header .t{font-weight:600}
+.layer .body{padding:0 16px 12px;display:none}
+.layer.open .body{display:block}
+.layer .body table{margin-top:10px}
+svg.fan{width:100%;height:auto;display:block}
+.small{font-size:13px;color:var(--ink-2)}
+footer{border-top:1px solid var(--rule);padding:22px 0 40px;font-size:13px;color:var(--ink-2)}
+.dl{display:inline-block;margin:4px 6px 0 0;font-size:13px}
+@media (max-width:860px){header.hero .wrap{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}.summary{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div>
+      <h1>Skema ganda Laporan CARF: apa yang terjadi pada berkas PJAK sebelum sampai ke CTS</h1>
+      <p class="lede">Laboratorium kecil yang menjalankan ulang pengujian dalam laporan <em>Re‑Entry Program</em>: membandingkan skema OECD CARF v1.4 dengan skema domestik DJP, memeriksa berkas contoh dengan empat lapis validasi, membentuk <em>status message</em> untuk PJAK, mensimulasikan transformasi ke pesan internasional per yurisdiksi, dan merekonsiliasi saldo.</p>
+      <div class="meta">Seluruh pemrosesan berjalan di peramban. Berkas contoh adalah data rekaan (PT Aset Kripto ADAG Indonesia, dari studi kasus sosialisasi DJP 25 September 2026). <b>Pemeriksaan skema di sini diturunkan dari XSD (struktur elemen, atribut wajib, batasan <code>xsd:choice</code>), bukan validator XSD penuh</b>; hasilnya telah dicocokkan dengan <code>libxml2</code> untuk tiga berkas contoh.</div>
+    </div>
+    <div class="status-card">
+      <dl>
+        <dt>Skema OECD</dt><dd id="st-oecd">memuat…</dd>
+        <dt>Skema domestik</dt><dd id="st-dom">memuat…</dd>
+        <dt>Berkas contoh</dt><dd id="st-samples">memuat…</dd>
+        <dt>Sumber data</dt><dd id="st-src">—</dd>
+      </dl>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs"><div class="wrap">
+  <button data-tab="skema" class="active">1 · Perbedaan skema</button>
+  <button data-tab="validasi">2 · Validasi berlapis</button>
+  <button data-tab="status">3 · Status message</button>
+  <button data-tab="transform">4 · Transformasi &amp; silsilah</button>
+  <button data-tab="rekon">5 · Rekonsiliasi saldo</button>
+</div></nav>
+
+<main class="wrap">
+
+<section class="panel active" id="skema">
+  <h2>Dua skema, satu identitas</h2>
+  <p class="note">Skema domestik DJP menambahkan dua elemen di dalam ruang nama OECD tanpa mengubah ruang nama atau nomor versinya. Tabel di bawah dihitung langsung dari kedua berkas XSD yang dimuat halaman ini.</p>
+  <div class="grid2">
+    <div class="card"><h4>Identitas skema</h4><table id="tbl-ident"></table></div>
+    <div class="card"><h4>Elemen yang hanya ada di skema domestik</h4><table id="tbl-added"></table>
+      <p class="small" style="margin:10px 0 0">Ditemukan dengan membandingkan model konten setiap <code>complexType</code> bernama pada kedua skema.</p></div>
+  </div>
+  <h3>Potongan XSD yang berbeda</h3>
+  <div class="grid2">
+    <div class="card"><h4>CryptoUsers_Type</h4><pre id="snip-users"></pre></div>
+    <div class="card"><h4>RelevantTransactions_Type</h4><pre id="snip-rt"></pre></div>
+  </div>
+  <h3>Uji cepat: dokumen yang sama, dua hasil</h3>
+  <p class="note">Berkas <code>sample_domestik_2026.xml</code> diperiksa terhadap kedua skema. Inilah inti temuan laporan: berkas PJAK tidak dapat diteruskan apa adanya ke CTS.</p>
+  <div class="grid2" id="quick-test"></div>
+  <div class="card tint" style="margin-top:22px"><h4>Jebakan kedua: <code>xsd:choice</code> tanpa <code>maxOccurs</code></h4>
+    <p style="margin:0">Dalam <code>RelevantTransactions_Type</code>, delapan kategori transaksi dibungkus satu <code>xsd:choice</code> tanpa <code>maxOccurs</code>. Satu blok hanya boleh memuat satu kategori (yang boleh berulang). Aset dengan transaksi masuk <em>dan</em> keluar harus dilaporkan dalam dua blok dengan nama aset yang sama, sehingga <code>SaldoCrypto</code> yang menempel pada tipe tersebut akan muncul dua kali untuk satu aset. Lapis L1 dan L3 di tab berikutnya menangkap kedua hal ini.</p></div>
+</section>
+
+<section class="panel" id="validasi">
+  <h2>Validasi berlapis L0–L4</h2>
+  <p class="note">Pilih berkas contoh atau unggah berkas CARF Anda sendiri. Lapis L0–L2 bersifat menolak, L3 menolak secara selektif, L4 hanya memberi peringatan. Setiap temuan membawa kode dan <code>FieldPath</code> yang dipakai oleh status message.</p>
+  <div class="toolbar">
+    <select id="sel-sample"></select>
+    <label class="file">Unggah XML… <input type="file" id="file-in" accept=".xml,text/xml"></label>
+    <button class="btn primary" id="btn-run">Jalankan validasi</button>
+    <span class="small" id="file-label"></span>
+  </div>
+  <div id="verdict"></div>
+  <div class="summary" id="summary"></div>
+  <div id="layers"></div>
+</section>
+
+<section class="panel" id="status">
+  <h2>Status message domestik</h2>
+  <p class="note">Hasil validasi di tab 2 dibentuk mengikuti struktur <em>CARF Status Message XML Schema</em> OECD (Juni 2025): kesalahan tingkat berkas (<code>FileError</code>), tingkat rekaman (<code>RecordError</code> dengan <code>DocRefIDInError</code> dan <code>FieldPath</code>), dan <code>ValidationResult</code>. Kode berawalan <code>DJP-</code> adalah ruang kode domestik yang diusulkan laporan.</p>
+  <div class="toolbar"><button class="btn" id="btn-dl-status">Unduh status message</button><span class="small" id="status-note"></span></div>
+  <pre id="status-xml">Jalankan validasi terlebih dahulu di tab 2.</pre>
+</section>
+
+<section class="panel" id="transform">
+  <h2>Transformasi ke pesan internasional dan registri silsilah</h2>
+  <p class="note">Satu berkas domestik dipecah menurut negara domisili pajak pengguna. Pengguna yang hanya berdomisili di Indonesia tidak dipertukarkan. Elemen domestik dibuang, <code>MessageSpec</code> dibentuk ulang, dan setiap pesan diperiksa kembali terhadap skema OECD v1.4. Tabel silsilah mencatat <code>DocRefId</code> domestik dan turunannya, dasar bagi penerusan koreksi.</p>
+  <div class="toolbar"><button class="btn primary" id="btn-transform">Jalankan transformasi pada berkas aktif</button><span class="small" id="tf-note"></span></div>
+  <div class="card" style="margin-bottom:18px"><svg class="fan" id="fan" viewBox="0 0 960 300"></svg></div>
+  <div class="grid2">
+    <div class="card"><h4>Pesan internasional yang dihasilkan</h4><table id="tbl-msgs"></table><div id="tf-downloads"></div></div>
+    <div class="card"><h4>Registri silsilah (DocRefId)</h4><table id="tbl-lineage"></table></div>
+  </div>
+  <h3>Simulasi koreksi</h3>
+  <p class="note">Pilih satu pengguna, lalu lihat pesan CARF702 mana yang harus dibentuk dan kode <code>DocTypeIndic</code> apa yang dipakai setiap rekaman, mengikuti matriks kombinasi dalam panduan OECD.</p>
+  <div class="toolbar"><select id="sel-corr"></select><button class="btn" id="btn-corr">Simulasikan koreksi</button></div>
+  <div id="corr-out"></div>
+</section>
+
+<section class="panel" id="rekon">
+  <h2>Rekonsiliasi saldo (lapis L4)</h2>
+  <p class="note">Elemen saldo adalah keunggulan rezim domestik: arus bersih unit dalam setahun dibandingkan dengan <code>SaldoCrypto</code> akhir tahun. Selisihnya adalah saldo awal yang tersirat. Saldo awal tersirat yang negatif, atau nilai <code>SaldoCrypto</code> yang berbeda untuk aset yang sama, menjadi peringatan.</p>
+  <div class="card"><div id="chart-rekon"></div><p class="small" style="margin:10px 0 0">Setiap baris diskalakan terhadap nilai terbesarnya sendiri, sehingga aset bernilai ribuan unit dan aset bernilai pecahan dapat dibaca berdampingan.</p></div>
+  <h3>Rincian per pengguna dan aset</h3>
+  <table id="tbl-rekon"></table>
+</section>
+
+</main>
+<footer><div class="wrap">Pendamping Laporan <em>Re‑Entry Program</em> "Skema Ganda Laporan CARF dan Rancangan Validasi Berlapis" — Yayan Puji Riyanto, Direktorat Teknologi Informasi dan Komunikasi, DJP (Oktober 2026). Rujukan teknis: OECD, <em>CARF XML Schema User Guide</em> (Okt 2024; Juli 2025); OECD, <em>CARF Status Message XML Schema</em> (Juni 2025); PMK 108/2025. Berkas XSD adalah milik OECD/DJP dan disertakan untuk keperluan pengujian.</div></footer>
+
+<!-- ===== embedded fallbacks (used when fetch() is unavailable, e.g. opening the file locally) ===== -->
+<script type="text/plain" id="emb-oecd"><?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2013 rel. 2 sp1 (x64) (http://www.altova.com) by Accounting Division (OECD) -->
+<xsd:schema xmlns:carf="urn:oecd:ties:carf:v1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:stf="urn:oecd:ties:carfstf:v5" xmlns:iso="urn:oecd:ties:isocarftypes:v1" targetNamespace="urn:oecd:ties:carf:v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.4">
+	<xsd:import namespace="urn:oecd:ties:isocarftypes:v1" schemaLocation="isocarftypes_v1.1.xsd"/>
+	<xsd:import namespace="urn:oecd:ties:carfstf:v5" schemaLocation="oecdcarftypes_v5.0.xsd"/>
+	<!--+++++++++++++++++++++++  Reusable Simple types ++++++++++++++++++++++++++++++++++++++ -->
+	<!-- Message type definitions -->
+	<xsd:simpleType name="MessageType_EnumType">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">Message type defines the type of reporting </xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="CARF"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!--  -->
+	<!--Transfer Type - 401 to 404-->
+	<xsd:simpleType name="ExchangeType_EnumType">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">Transfer Type</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="CARF401">
+				<xsd:annotation>
+					<xsd:documentation>Staking</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF402">
+				<xsd:annotation>
+					<xsd:documentation>Crypto Loan</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF403">
+				<xsd:annotation>
+					<xsd:documentation>Wrapping</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF404">
+				<xsd:annotation>
+					<xsd:documentation>Collateral</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!--  -->
+	<!--Transfer Type - 501 to 507-->
+	<xsd:simpleType name="TransferType_EnumType">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">Transfer Type</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="CARF501">
+				<xsd:annotation>
+					<xsd:documentation>Airdrop</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF502">
+				<xsd:annotation>
+					<xsd:documentation>Staking income</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF503">
+				<xsd:annotation>
+					<xsd:documentation>Mining income</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF504">
+				<xsd:annotation>
+					<xsd:documentation>Crpyto loan</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF505">
+				<xsd:annotation>
+					<xsd:documentation>Transfer from another RCASP</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF506">
+				<xsd:annotation>
+					<xsd:documentation>Sale of goods or services</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF507">
+				<xsd:annotation>
+					<xsd:documentation>Collateral</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF508">
+				<xsd:annotation>
+					<xsd:documentation>Other</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF509">
+				<xsd:annotation>
+					<xsd:documentation>Unknown (to be selected as the default value where the Reporting Crypto-Asset Service Provider has no knowledge on the Transfer Type)</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!--  -->
+	<!-- Account Number Type - 601 to 604-->
+	<xsd:simpleType name="TransferOutType_EnumType">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">Account Number Type</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="CARF601">
+				<xsd:annotation>
+					<xsd:documentation>Transfer to another RCASP</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF602">
+				<xsd:annotation>
+					<xsd:documentation>Crypto Loan</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF603">
+				<xsd:annotation>
+					<xsd:documentation>Purchase of goods or services, to be used in respect of transactions other than those already reported as Reportable Retail Payment Transactions</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF604">
+				<xsd:annotation>
+					<xsd:documentation>Collateral</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF605">
+				<xsd:annotation>
+					<xsd:documentation>Other</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF606">
+				<xsd:annotation>
+					<xsd:documentation>Unknown (to be selected as the default value where the Reporting Crypto-Asset Service Provider has no knowledge on the Transfer Type)</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!--  -->
+	<!-- MessageTypeIndic - 701 to 703 -->
+	<xsd:simpleType name="CarfMessageTypeIndic_EnumType">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">The MessageTypeIndic defines the type of message sent</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="CARF701">
+				<xsd:annotation>
+					<xsd:documentation>The message contains new information</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF702">
+				<xsd:annotation>
+					<xsd:documentation>The message contains corrections/deletions for previously sent information. When the MesseageTypeIndic is CARF702, the DocTypeIndic can contain either Corrections (OECD2) or Deletions (OECD3) or both, but new data (OECD1) cannot be contained. Note that OECD0 can be included for RCASP's DocTypeIndic.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF703">
+				<xsd:annotation>
+					<xsd:documentation>The message advises there is no data to report</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!--  -->
+	<!-- Controlling Person Type - 801 to 813 -->
+	<xsd:simpleType name="CarfCtrlgPersonType_EnumType">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">Controlling Person Type</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="CARF801">
+				<xsd:annotation>
+					<xsd:documentation>CP of legal person - ownership</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF802">
+				<xsd:annotation>
+					<xsd:documentation>CP of legal person - other means</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF803">
+				<xsd:annotation>
+					<xsd:documentation>CP of legal person - senior managing official</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF804">
+				<xsd:annotation>
+					<xsd:documentation>CP of legal arrangement - trust - settlor</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF805">
+				<xsd:annotation>
+					<xsd:documentation>CP of legal arrangement - trust - trustee</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF806">
+				<xsd:annotation>
+					<xsd:documentation>CP of legal arrangement - trust - protector</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF807">
+				<xsd:annotation>
+					<xsd:documentation>CP of legal arrangement - trust - beneficiary</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF808">
+				<xsd:annotation>
+					<xsd:documentation>CP of legal arrangement - trust - other</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF809">
+				<xsd:annotation>
+					<xsd:documentation>CP of legal arrangement - other - settlor-equivalent</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF810">
+				<xsd:annotation>
+					<xsd:documentation>CP of legal arrangement - other - trustee-equivalent</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF811">
+				<xsd:annotation>
+					<xsd:documentation>CP of legal arrangement - other - protector-equivalent</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF812">
+				<xsd:annotation>
+					<xsd:documentation>CP of legal arrangement - other - beneficiary-equivalent</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF813">
+				<xsd:annotation>
+					<xsd:documentation>CP of legal arrangement - other - other-equivalent</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!--  -->
+	<!--CARF Nexus Type -  901 to 907 -->
+	<xsd:simpleType name="Nexus_EnumType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="CARF901">
+				<xsd:annotation>
+					<xsd:documentation>Tax Residence</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF902">
+				<xsd:annotation>
+					<xsd:documentation>Incorporation</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF903">
+				<xsd:annotation>
+					<xsd:documentation>Management</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF904">
+				<xsd:annotation>
+					<xsd:documentation>Place of Business</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF905">
+				<xsd:annotation>
+					<xsd:documentation>Branch</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF906">
+				<xsd:annotation>
+					<xsd:documentation>Authorisation</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF907">
+				<xsd:annotation>
+					<xsd:documentation>Remote Services</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!--  -->
+	<!--CARF Alt Valuation Type -  1001 to 1004 -->
+	<xsd:simpleType name="AltValuation_EnumType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="CARF1001">
+				<xsd:annotation>
+					<xsd:documentation>Book value</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF1002">
+				<xsd:annotation>
+					<xsd:documentation>Third-party value</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF1003">
+				<xsd:annotation>
+					<xsd:documentation>Recent RCASP valuation</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF1004">
+				<xsd:annotation>
+					<xsd:documentation>Reasonable estimate by RCASP</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!--  -->
+	<xsd:simpleType name="TwoDigFract_Type">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">Data type for any kind of numeric data with two decimal fraction digits, especially monetary amounts.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:decimal">
+			<xsd:fractionDigits value="2"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!--  -->
+	<xsd:simpleType name="SixDigFract_Type">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">Data type for any kind of numeric data with six decimal fraction digits, especially monetary amounts.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:decimal">
+			<xsd:fractionDigits value="6"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!--  -->
+	<!--++++++++++++++++++ Reusable Complex types +++++++++++++++++++++++++++++++++++++ -->
+	<!-- Message specification: Data identifying and describing the message as a whole -->
+	<xsd:complexType name="RCASP_Type">
+		<xsd:sequence>
+			<xsd:element name="RCASP_ID">
+				<xsd:complexType>
+					<xsd:choice>
+						<xsd:element name="Individual" type="carf:PersonParty_Type"/>
+						<xsd:element name="Entity" type="carf:OrganisationParty_Type"/>
+					</xsd:choice>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="Nexus" type="carf:Nexus_EnumType" minOccurs="0"/>
+			<xsd:element name="OtherNexus" minOccurs="0">
+				<xsd:complexType>
+					<xsd:attribute name="Nexus" type="carf:Nexus_EnumType" use="required"/>
+					<xsd:attribute name="ResCountryCode" type="iso:CountryCode_Type" use="required"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="DocSpec" type="stf:DocSpec_Type"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- -->
+	<xsd:complexType name="CryptoUsers_Type">
+		<xsd:sequence>
+			<xsd:element name="UserID">
+				<xsd:complexType>
+					<xsd:choice>
+						<xsd:element name="Entity" type="carf:OrganisationParty_Type"/>
+						<xsd:element name="Individual" type="carf:PersonParty_Type"/>
+					</xsd:choice>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="ControllingPerson" type="carf:ControllingPerson_Type" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="RelevantTransactions" type="carf:RelevantTransactions_Type" maxOccurs="unbounded"/>
+			<xsd:element name="DocSpec" type="stf:DocSpec_Type"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- -->
+	<xsd:complexType name="RelevantTransactions_Type">
+		<xsd:sequence>
+			<xsd:element name="CryptoAsset" type="stf:StringMin1Max200_Type"/>
+			<xsd:choice>
+				<xsd:element name="CryptoToCryptoIn" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="ExchangeType" type="carf:ExchangeType_EnumType" minOccurs="0"/>
+							<xsd:element name="NumberofTransactions" type="xsd:integer"/>
+							<xsd:element name="Amount" type="carf:MonAmnt_Type"/>
+							<xsd:element name="NumberofUnits" type="xsd:decimal"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="CryptoToCryptoOut" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="ExchangeType" type="carf:ExchangeType_EnumType" minOccurs="0"/>
+							<xsd:element name="NumberofTransactions" type="xsd:integer"/>
+							<xsd:element name="Amount" type="carf:MonAmnt_Type"/>
+							<xsd:element name="NumberofUnits" type="xsd:decimal"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="CryptoFiatIn" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="ExchangeType" type="carf:ExchangeType_EnumType" minOccurs="0"/>
+							<xsd:element name="NumberofTransactions" type="xsd:integer"/>
+							<xsd:element name="Amount" type="carf:MonAmnt_Type"/>
+							<xsd:element name="NumberofUnits" type="xsd:decimal"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="CryptoFiatOut" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="ExchangeType" type="carf:ExchangeType_EnumType" minOccurs="0"/>
+							<xsd:element name="NumberofTransactions" type="xsd:integer"/>
+							<xsd:element name="Amount" type="carf:MonAmnt_Type"/>
+							<xsd:element name="NumberofUnits" type="xsd:decimal"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="CryptoTransferIn" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="TransferType" type="carf:TransferType_EnumType"/>
+							<xsd:element name="NumberofTransactions" type="xsd:integer"/>
+							<xsd:element name="Amount" type="carf:MonAmnt_Type"/>
+							<xsd:element name="NumberofUnits" type="xsd:decimal"/>
+							<xsd:element name="AltValuation" type="carf:AltValuation_EnumType" minOccurs="0"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="CryptoTransferOut" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="TransferType" type="carf:TransferOutType_EnumType"/>
+							<xsd:element name="NumberofTransactions" type="xsd:integer"/>
+							<xsd:element name="Amount" type="carf:MonAmnt_Type"/>
+							<xsd:element name="NumberofUnits" type="xsd:decimal"/>
+							<xsd:element name="AltValuation" type="carf:AltValuation_EnumType" minOccurs="0"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="TransferWallet" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="Amount" type="carf:MonAmnt_Type"/>
+							<xsd:element name="NumberofUnits" type="xsd:decimal"/>
+							<xsd:element name="AltValuation" type="carf:AltValuation_EnumType" minOccurs="0"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="RRPT" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:documentation>Reportable Retail Payment Transcactions (Relevant Crypto Assets)</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="NumberofTransactions" type="xsd:integer"/>
+							<xsd:element name="Amount" type="carf:MonAmnt_Type"/>
+							<xsd:element name="NumberofUnits" type="xsd:decimal"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:choice>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- -->
+	<xsd:complexType name="ControllingPerson_Type">
+		<xsd:sequence>
+			<xsd:element name="Individual" type="carf:PersonParty_Type"/>
+			<xsd:element name="CtrlgPersonType" type="carf:CarfCtrlgPersonType_EnumType" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- -->
+	<xsd:complexType name="Identity_Type">
+		<xsd:choice>
+			<xsd:element name="Individual" type="carf:PersonParty_Type"/>
+			<xsd:element name="Entity" type="carf:OrganisationParty_Type"/>
+		</xsd:choice>
+	</xsd:complexType>
+	<!--Message specification: Data identifying and describing the message as a whole-->
+	<xsd:complexType name="MessageSpec_Type">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">Information in the message header identifies the Tax Administration that is sending the message.  It 
+specifies when the message was created, what period (normally a year) the report is for, and the nature of the report (original, 
+corrected, supplemental, etc).</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="SendingEntityIN" type="stf:StringMin1Max200_Type" minOccurs="0"/>
+			<xsd:element name="TransmittingCountry" type="iso:CountryCode_Type"/>
+			<xsd:element name="ReceivingCountry" type="iso:CountryCode_Type"/>
+			<!-- modified for CARF  -->
+			<xsd:element name="MessageType" type="carf:MessageType_EnumType"/>
+			<xsd:element name="Warning" type="stf:StringMin1Max4000_Type" minOccurs="0"/>
+			<xsd:element name="Contact" type="stf:StringMin1Max4000_Type" minOccurs="0"/>
+			<xsd:element name="MessageRefId" type="stf:StringMin1Max170_Type"/>
+			<xsd:element name="MessageTypeIndic" type="carf:CarfMessageTypeIndic_EnumType"/>
+			<xsd:element name="ReportingPeriod" type="xsd:date"/>
+			<xsd:element name="Timestamp" type="xsd:dateTime"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- -->
+	<!-- The Name of a Party, given in fixed Form-->
+	<xsd:complexType name="NamePerson_Type">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">The user must spread the data about the name of a party over up to six elements. The container element for this will be 'NameFix'. </xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="PrecedingTitle" type="stf:StringMin1Max200_Type" minOccurs="0"/>
+			<xsd:element name="Title" type="stf:StringMin1Max200_Type" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="FirstName">
+				<xsd:complexType>
+					<xsd:simpleContent>
+						<xsd:extension base="stf:StringMin1Max200_Type">
+							<xsd:attribute name="xnlNameType" type="stf:StringMin1Max200_Type">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="en">Defines the name type of FirstName. Example: Given Name, Forename, Christian Name, Father's Name, etc. In some countries, FirstName could be a Family Name or a SurName. Use this attribute to define the type for this name.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:attribute>
+						</xsd:extension>
+					</xsd:simpleContent>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="MiddleName" minOccurs="0" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:simpleContent>
+						<xsd:extension base="stf:StringMin1Max200_Type">
+							<xsd:attribute name="xnlNameType" type="stf:StringMin1Max200_Type">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="en">Defines the name type of Middle Name. Example: First name, middle name, maiden name, father's name, given name, etc.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:attribute>
+						</xsd:extension>
+					</xsd:simpleContent>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="NamePrefix" minOccurs="0">
+				<xsd:complexType>
+					<xsd:simpleContent>
+						<xsd:extension base="stf:StringMin1Max200_Type">
+							<xsd:attribute name="xnlNameType" type="stf:StringMin1Max200_Type">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="en">Defines the type of name associated with the NamePrefix. For example the type of name is LastName and this prefix is the prefix for this last name.
+							</xsd:documentation>
+								</xsd:annotation>
+							</xsd:attribute>
+						</xsd:extension>
+					</xsd:simpleContent>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="LastName">
+				<xsd:complexType>
+					<xsd:simpleContent>
+						<xsd:extension base="stf:StringMin1Max200_Type">
+							<xsd:attribute name="xnlNameType" type="stf:StringMin1Max200_Type">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="en">Defines the name type of LastName. Example: Father's name, Family name, Sur Name, Mother's Name, etc. In some countries, LastName could be the given name or first name.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:attribute>
+						</xsd:extension>
+					</xsd:simpleContent>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="GenerationIdentifier" type="stf:StringMin1Max200_Type" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="Suffix" type="stf:StringMin1Max200_Type" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="GeneralSuffix" type="stf:StringMin1Max200_Type" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="nameType" type="stf:OECDNameType_EnumType" use="optional"/>
+	</xsd:complexType>
+	<!-- -->
+	<!-- Collection of all Data describing a person as a  Party -->
+	<xsd:complexType name="PersonParty_Type">
+		<xsd:sequence>
+			<xsd:element name="ResCountryCode" type="iso:CountryCode_Type" maxOccurs="unbounded"/>
+			<xsd:element name="TIN" type="carf:TIN_Type" maxOccurs="unbounded"/>
+			<xsd:element name="IIN" type="carf:IndividualIN_Type" minOccurs="0" maxOccurs="unbounded">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="en">Individual Identification Number</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Name" type="carf:NamePerson_Type" maxOccurs="unbounded"/>
+			<xsd:element name="Address" type="carf:Address_Type" maxOccurs="unbounded"/>
+			<xsd:element name="Nationality" type="iso:CountryCode_Type" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="BirthInfo">
+				<xsd:annotation>
+					<xsd:documentation>.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="BirthDate" type="xsd:date"/>
+						<xsd:element name="BirthPlace" type="carf:BirthPlace_Type" minOccurs="0"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- -->
+	<!--General Type for Monetary Amounts -->
+	<xsd:complexType name="MonAmnt_Type">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">This data type is to be used whenever monetary amounts are to be communicated. Such amounts shall be given in with full amoutns and two decimals.  The code for the currency in which the value is expressed has to be taken from the ISO codelist 4217 and added in attribute currCode.
+</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleContent>
+			<xsd:extension base="xsd:decimal">
+				<xsd:attribute name="currCode" type="iso:currCode_Type" use="required"/>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<!-- -->
+	<!-- Organisation Identification Number -->
+	<xsd:complexType name="OrganisationIN_Type">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">This is the identification number/identification code for the Entity in question. As the identifier may be not strictly numeric, it is just defined as a string of characters. Attribute 'issuedBy' is required to designate the issuer of the identifier.  Attribute 'INType' defines the type of identification number. </xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleContent>
+			<xsd:extension base="stf:StringMin1Max200_Type">
+				<xsd:attribute name="issuedBy" type="iso:CountryCode_Type" use="optional">
+					<xsd:annotation>
+						<xsd:documentation xml:lang="en">Country code of issuing country, indicating country of Residence (to taxes and other)</xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+				<xsd:attribute name="INType" use="optional">
+					<xsd:annotation>
+						<xsd:documentation xml:lang="en">Identification Number Type</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="stf:StringMin1Max200_Type">
+							<xsd:enumeration value="LEI"/>
+							<xsd:enumeration value="EIN"/>
+							<xsd:enumeration value="BRN"/>
+							<xsd:enumeration value="Other"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:attribute>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<!-- -->
+	<!-- Individual Identification Number -->
+	<xsd:complexType name="IndividualIN_Type">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">This is the identification number/identification code for the Entity in question. As the identifier may be not strictly numeric, it is just defined as a string of characters. Attribute 'issuedBy' is required to designate the issuer of the identifier.  Attribute 'INType' defines the type of identification number. </xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleContent>
+			<xsd:extension base="stf:StringMin1Max200_Type">
+				<xsd:attribute name="issuedBy" type="iso:CountryCode_Type" use="optional">
+					<xsd:annotation>
+						<xsd:documentation xml:lang="en">Country code of issuing country, indicating country of Residence (to taxes and other)</xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<!-- -->
+	<!-- Collection of all Data describing an organisation as party-->
+	<xsd:complexType name="OrganisationParty_Type">
+		<xsd:sequence>
+			<xsd:element name="ResCountryCode" type="iso:CountryCode_Type" maxOccurs="unbounded"/>
+			<xsd:element name="TIN" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:simpleContent>
+						<xsd:restriction base="carf:TIN_Type">
+							<xsd:minLength value="1"/>
+							<xsd:attribute name="issuedBy" type="iso:CountryCode_Type" use="optional"/>
+							<xsd:attribute name="unknown" type="xsd:boolean" use="optional"/>
+						</xsd:restriction>
+					</xsd:simpleContent>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="IN" type="carf:OrganisationIN_Type" minOccurs="0" maxOccurs="unbounded">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="en">Entity Identification Number - OrganisationIN_Type</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Name" type="carf:NameOrganisation_Type" maxOccurs="unbounded"/>
+			<xsd:element name="Address" type="carf:Address_Type" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- -->
+	<!-- Address Fix -->
+	<xsd:complexType name="AddressFix_Type">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">
+		</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="Street" type="stf:StringMin1Max200_Type" minOccurs="0"/>
+			<xsd:element name="BuildingIdentifier" type="stf:StringMin1Max200_Type" minOccurs="0"/>
+			<xsd:element name="SuiteIdentifier" type="stf:StringMin1Max200_Type" minOccurs="0"/>
+			<xsd:element name="FloorIdentifier" type="stf:StringMin1Max200_Type" minOccurs="0"/>
+			<xsd:element name="DistrictName" type="stf:StringMin1Max200_Type" minOccurs="0"/>
+			<xsd:element name="POB" type="stf:StringMin1Max200_Type" minOccurs="0"/>
+			<xsd:element name="PostCode" type="stf:StringMin1Max200_Type" minOccurs="0"/>
+			<xsd:element name="City" type="stf:StringMin1Max200_Type"/>
+			<xsd:element name="CountrySubentity" type="stf:StringMin1Max200_Type" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!--  -->
+	<!--  The Address of a Party, given in fixed or free Form, possibly in both Forms -->
+	<xsd:complexType name="Address_Type">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">
+		</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="CountryCode" type="iso:CountryCode_Type"/>
+			<xsd:sequence>
+				<xsd:element name="AddressFix" type="carf:AddressFix_Type"/>
+				<xsd:element name="AdditionalAddressInfo" type="stf:StringMin1Max4000_Type" minOccurs="0"/>
+			</xsd:sequence>
+		</xsd:sequence>
+		<xsd:attribute name="legalAddressType" type="stf:OECDLegalAddressType_EnumType" use="optional"/>
+	</xsd:complexType>
+	<!--  -->
+	<!-- Organisation name -->
+	<xsd:complexType name="NameOrganisation_Type">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">Name of organisation</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleContent>
+			<xsd:extension base="stf:StringMin1Max200_Type">
+				<xsd:attribute name="nameType" type="stf:OECDNameType_EnumType" use="optional"/>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<!-- -->
+	<!-- TIN -->
+	<xsd:complexType name="TIN_Type">
+		<xsd:simpleContent>
+			<xsd:extension base="stf:StringMin0Max200_Type">
+				<xsd:attribute name="issuedBy" type="iso:CountryCode_Type" use="optional"/>
+				<xsd:attribute name="unknown" type="xsd:boolean" use="optional"/>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<!-- -->
+	<!--The place of birth -->
+	<xsd:complexType name="BirthPlace_Type">
+		<xsd:annotation>
+			<xsd:documentation>This element provides information about the place of birth. This element must be filled in at least with the city and the country of birth (either the current jurisdiction identified by 2-characters country code or a former jurisdiction identified by a name).</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="City" type="stf:StringMin1Max200_Type"/>
+			<xsd:element name="CitySubentity" type="stf:StringMin1Max200_Type" minOccurs="0"/>
+			<xsd:element name="CountryInfo">
+				<xsd:complexType>
+					<xsd:choice>
+						<xsd:element name="CountryCode" type="iso:CountryCode_Type"/>
+						<xsd:element name="FormerCountryName" type="stf:StringMin1Max200_Type"/>
+					</xsd:choice>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- -->
+	<!-- CARF Body Type - CARF Report  -->
+	<xsd:complexType name="CARFBody_Type">
+		<xsd:sequence>
+			<xsd:element name="RCASP" type="carf:RCASP_Type"/>
+			<xsd:element name="CryptoUsers" type="carf:CryptoUsers_Type" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!--+++++++++++++++++++++++++++++++++++++++++++++++++++++++++ Schema  element ++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!-- CarfOECD File Message structure  -->
+	<!-- -->
+	<!-- CARF Message structure  -->
+	<xsd:element name="CARF_OECD">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="MessageSpec" type="carf:MessageSpec_Type"/>
+				<xsd:element name="CARFBody" type="carf:CARFBody_Type" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+			<xsd:attribute name="version" type="stf:StringMin1Max10_Type">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="en">CARF Version</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>
+</script>
+<script type="text/plain" id="emb-dom"><?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2013 rel. 2 sp1 (x64) (http://www.altova.com) by Accounting Division (OECD) -->
+<xsd:schema xmlns:carf="urn:oecd:ties:carf:v1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:stf="urn:oecd:ties:carfstf:v5" xmlns:iso="urn:oecd:ties:isocarftypes:v1" targetNamespace="urn:oecd:ties:carf:v1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.4">
+	<xsd:import namespace="urn:oecd:ties:isocarftypes:v1" schemaLocation="isocarftypes_v1.1.xsd"/>
+	<xsd:import namespace="urn:oecd:ties:carfstf:v5" schemaLocation="oecdcarftypes_v5.0.xsd"/>
+	<!--+++++++++++++++++++++++  Reusable Simple types ++++++++++++++++++++++++++++++++++++++ -->
+	<!-- Message type definitions -->
+	<xsd:simpleType name="MessageType_EnumType">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">Message type defines the type of reporting </xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="CARF"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!--  -->
+	<!--Transfer Type - 401 to 404-->
+	<xsd:simpleType name="ExchangeType_EnumType">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">Transfer Type</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="CARF401">
+				<xsd:annotation>
+					<xsd:documentation>Staking</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF402">
+				<xsd:annotation>
+					<xsd:documentation>Crypto Loan</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF403">
+				<xsd:annotation>
+					<xsd:documentation>Wrapping</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF404">
+				<xsd:annotation>
+					<xsd:documentation>Collateral</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!--  -->
+	<!--Transfer Type - 501 to 507-->
+	<xsd:simpleType name="TransferType_EnumType">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">Transfer Type</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="CARF501">
+				<xsd:annotation>
+					<xsd:documentation>Airdrop</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF502">
+				<xsd:annotation>
+					<xsd:documentation>Staking income</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF503">
+				<xsd:annotation>
+					<xsd:documentation>Mining income</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF504">
+				<xsd:annotation>
+					<xsd:documentation>Crpyto loan</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF505">
+				<xsd:annotation>
+					<xsd:documentation>Transfer from another RCASP</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF506">
+				<xsd:annotation>
+					<xsd:documentation>Sale of goods or services</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF507">
+				<xsd:annotation>
+					<xsd:documentation>Collateral</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF508">
+				<xsd:annotation>
+					<xsd:documentation>Other</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF509">
+				<xsd:annotation>
+					<xsd:documentation>Unknown (to be selected as the default value where the Reporting Crypto-Asset Service Provider has no knowledge on the Transfer Type)</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!--  -->
+	<!-- Account Number Type - 601 to 604-->
+	<xsd:simpleType name="TransferOutType_EnumType">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">Account Number Type</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="CARF601">
+				<xsd:annotation>
+					<xsd:documentation>Transfer to another RCASP</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF602">
+				<xsd:annotation>
+					<xsd:documentation>Crypto Loan</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF603">
+				<xsd:annotation>
+					<xsd:documentation>Purchase of goods or services, to be used in respect of transactions other than those already reported as Reportable Retail Payment Transactions</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF604">
+				<xsd:annotation>
+					<xsd:documentation>Collateral</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF605">
+				<xsd:annotation>
+					<xsd:documentation>Other</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF606">
+				<xsd:annotation>
+					<xsd:documentation>Unknown (to be selected as the default value where the Reporting Crypto-Asset Service Provider has no knowledge on the Transfer Type)</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!--  -->
+	<!-- MessageTypeIndic - 701 to 703 -->
+	<xsd:simpleType name="CarfMessageTypeIndic_EnumType">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">The MessageTypeIndic defines the type of message sent</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="CARF701">
+				<xsd:annotation>
+					<xsd:documentation>The message contains new information</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF702">
+				<xsd:annotation>
+					<xsd:documentation>The message contains corrections/deletions for previously sent information. When the MesseageTypeIndic is CARF702, the DocTypeIndic can contain either Corrections (OECD2) or Deletions (OECD3) or both, but new data (OECD1) cannot be contained. Note that OECD0 can be included for RCASP's DocTypeIndic.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF703">
+				<xsd:annotation>
+					<xsd:documentation>The message advises there is no data to report</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!--  -->
+	<!-- Controlling Person Type - 801 to 813 -->
+	<xsd:simpleType name="CarfCtrlgPersonType_EnumType">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">Controlling Person Type</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="CARF801">
+				<xsd:annotation>
+					<xsd:documentation>CP of legal person - ownership</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF802">
+				<xsd:annotation>
+					<xsd:documentation>CP of legal person - other means</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF803">
+				<xsd:annotation>
+					<xsd:documentation>CP of legal person - senior managing official</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF804">
+				<xsd:annotation>
+					<xsd:documentation>CP of legal arrangement - trust - settlor</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF805">
+				<xsd:annotation>
+					<xsd:documentation>CP of legal arrangement - trust - trustee</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF806">
+				<xsd:annotation>
+					<xsd:documentation>CP of legal arrangement - trust - protector</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF807">
+				<xsd:annotation>
+					<xsd:documentation>CP of legal arrangement - trust - beneficiary</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF808">
+				<xsd:annotation>
+					<xsd:documentation>CP of legal arrangement - trust - other</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF809">
+				<xsd:annotation>
+					<xsd:documentation>CP of legal arrangement - other - settlor-equivalent</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF810">
+				<xsd:annotation>
+					<xsd:documentation>CP of legal arrangement - other - trustee-equivalent</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF811">
+				<xsd:annotation>
+					<xsd:documentation>CP of legal arrangement - other - protector-equivalent</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF812">
+				<xsd:annotation>
+					<xsd:documentation>CP of legal arrangement - other - beneficiary-equivalent</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF813">
+				<xsd:annotation>
+					<xsd:documentation>CP of legal arrangement - other - other-equivalent</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!--  -->
+	<!--CARF Nexus Type -  901 to 907 -->
+	<xsd:simpleType name="Nexus_EnumType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="CARF901">
+				<xsd:annotation>
+					<xsd:documentation>Tax Residence</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF902">
+				<xsd:annotation>
+					<xsd:documentation>Incorporation</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF903">
+				<xsd:annotation>
+					<xsd:documentation>Management</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF904">
+				<xsd:annotation>
+					<xsd:documentation>Place of Business</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF905">
+				<xsd:annotation>
+					<xsd:documentation>Branch</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF906">
+				<xsd:annotation>
+					<xsd:documentation>Authorisation</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF907">
+				<xsd:annotation>
+					<xsd:documentation>Remote Services</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!--  -->
+	<!--CARF Alt Valuation Type -  1001 to 1004 -->
+	<xsd:simpleType name="AltValuation_EnumType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="CARF1001">
+				<xsd:annotation>
+					<xsd:documentation>Book value</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF1002">
+				<xsd:annotation>
+					<xsd:documentation>Third-party value</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF1003">
+				<xsd:annotation>
+					<xsd:documentation>Recent RCASP valuation</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+			<xsd:enumeration value="CARF1004">
+				<xsd:annotation>
+					<xsd:documentation>Reasonable estimate by RCASP</xsd:documentation>
+				</xsd:annotation>
+			</xsd:enumeration>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!--  -->
+	<xsd:simpleType name="TwoDigFract_Type">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">Data type for any kind of numeric data with two decimal fraction digits, especially monetary amounts.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:decimal">
+			<xsd:fractionDigits value="2"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!--  -->
+	<xsd:simpleType name="SixDigFract_Type">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">Data type for any kind of numeric data with six decimal fraction digits, especially monetary amounts.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:decimal">
+			<xsd:fractionDigits value="6"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!--  -->
+	<!--++++++++++++++++++ Reusable Complex types +++++++++++++++++++++++++++++++++++++ -->
+	<!-- Message specification: Data identifying and describing the message as a whole -->
+	<xsd:complexType name="RCASP_Type">
+		<xsd:sequence>
+			<xsd:element name="RCASP_ID">
+				<xsd:complexType>
+					<xsd:choice>
+						<xsd:element name="Individual" type="carf:PersonParty_Type"/>
+						<xsd:element name="Entity" type="carf:OrganisationParty_Type"/>
+					</xsd:choice>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="Nexus" type="carf:Nexus_EnumType" minOccurs="0"/>
+			<xsd:element name="OtherNexus" minOccurs="0">
+				<xsd:complexType>
+					<xsd:attribute name="Nexus" type="carf:Nexus_EnumType" use="required"/>
+					<xsd:attribute name="ResCountryCode" type="iso:CountryCode_Type" use="required"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="DocSpec" type="stf:DocSpec_Type"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- -->
+	<xsd:complexType name="CryptoUsers_Type">
+		<xsd:sequence>
+			<xsd:element name="UserID">
+				<xsd:complexType>
+					<xsd:choice>
+						<xsd:element name="Entity" type="carf:OrganisationParty_Type"/>
+						<xsd:element name="Individual" type="carf:PersonParty_Type"/>
+					</xsd:choice>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="ControllingPerson" type="carf:ControllingPerson_Type" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="RelevantTransactions" type="carf:RelevantTransactions_Type" maxOccurs="unbounded"/>
+			<xsd:element name="SaldoDeposit" type="xsd:decimal" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="DocSpec" type="stf:DocSpec_Type"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- -->
+	<xsd:complexType name="RelevantTransactions_Type">
+		<xsd:sequence>
+			<xsd:element name="CryptoAsset" type="stf:StringMin1Max200_Type"/>
+			<xsd:element name="SaldoCrypto" type="xsd:decimal" minOccurs="0" maxOccurs="1"/>
+			<xsd:choice>
+				<xsd:element name="CryptoToCryptoIn" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="ExchangeType" type="carf:ExchangeType_EnumType" minOccurs="0"/>
+							<xsd:element name="NumberofTransactions" type="xsd:integer"/>
+							<xsd:element name="Amount" type="carf:MonAmnt_Type"/>
+							<xsd:element name="NumberofUnits" type="xsd:decimal"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="CryptoToCryptoOut" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="ExchangeType" type="carf:ExchangeType_EnumType" minOccurs="0"/>
+							<xsd:element name="NumberofTransactions" type="xsd:integer"/>
+							<xsd:element name="Amount" type="carf:MonAmnt_Type"/>
+							<xsd:element name="NumberofUnits" type="xsd:decimal"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="CryptoFiatIn" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="ExchangeType" type="carf:ExchangeType_EnumType" minOccurs="0"/>
+							<xsd:element name="NumberofTransactions" type="xsd:integer"/>
+							<xsd:element name="Amount" type="carf:MonAmnt_Type"/>
+							<xsd:element name="NumberofUnits" type="xsd:decimal"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="CryptoFiatOut" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="ExchangeType" type="carf:ExchangeType_EnumType" minOccurs="0"/>
+							<xsd:element name="NumberofTransactions" type="xsd:integer"/>
+							<xsd:element name="Amount" type="carf:MonAmnt_Type"/>
+							<xsd:element name="NumberofUnits" type="xsd:decimal"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="CryptoTransferIn" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="TransferType" type="carf:TransferType_EnumType"/>
+							<xsd:element name="NumberofTransactions" type="xsd:integer"/>
+							<xsd:element name="Amount" type="carf:MonAmnt_Type"/>
+							<xsd:element name="NumberofUnits" type="xsd:decimal"/>
+							<xsd:element name="AltValuation" type="carf:AltValuation_EnumType" minOccurs="0"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="CryptoTransferOut" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="TransferType" type="carf:TransferOutType_EnumType"/>
+							<xsd:element name="NumberofTransactions" type="xsd:integer"/>
+							<xsd:element name="Amount" type="carf:MonAmnt_Type"/>
+							<xsd:element name="NumberofUnits" type="xsd:decimal"/>
+							<xsd:element name="AltValuation" type="carf:AltValuation_EnumType" minOccurs="0"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="TransferWallet" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="Amount" type="carf:MonAmnt_Type"/>
+							<xsd:element name="NumberofUnits" type="xsd:decimal"/>
+							<xsd:element name="AltValuation" type="carf:AltValuation_EnumType" minOccurs="0"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="RRPT" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:documentation>Reportable Retail Payment Transcactions (Relevant Crypto Assets)</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="NumberofTransactions" type="xsd:integer"/>
+							<xsd:element name="Amount" type="carf:MonAmnt_Type"/>
+							<xsd:element name="NumberofUnits" type="xsd:decimal"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:choice>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- -->
+	<xsd:complexType name="ControllingPerson_Type">
+		<xsd:sequence>
+			<xsd:element name="Individual" type="carf:PersonParty_Type"/>
+			<xsd:element name="CtrlgPersonType" type="carf:CarfCtrlgPersonType_EnumType" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- -->
+	<xsd:complexType name="Identity_Type">
+		<xsd:choice>
+			<xsd:element name="Individual" type="carf:PersonParty_Type"/>
+			<xsd:element name="Entity" type="carf:OrganisationParty_Type"/>
+		</xsd:choice>
+	</xsd:complexType>
+	<!--Message specification: Data identifying and describing the message as a whole-->
+	<xsd:complexType name="MessageSpec_Type">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">Information in the message header identifies the Tax Administration that is sending the message.  It 
+specifies when the message was created, what period (normally a year) the report is for, and the nature of the report (original, 
+corrected, supplemental, etc).</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="SendingEntityIN" type="stf:StringMin1Max200_Type" minOccurs="0"/>
+			<xsd:element name="TransmittingCountry" type="iso:CountryCode_Type"/>
+			<xsd:element name="ReceivingCountry" type="iso:CountryCode_Type"/>
+			<!-- modified for CARF  -->
+			<xsd:element name="MessageType" type="carf:MessageType_EnumType"/>
+			<xsd:element name="Warning" type="stf:StringMin1Max4000_Type" minOccurs="0"/>
+			<xsd:element name="Contact" type="stf:StringMin1Max4000_Type" minOccurs="0"/>
+			<xsd:element name="MessageRefId" type="stf:StringMin1Max170_Type"/>
+			<xsd:element name="MessageTypeIndic" type="carf:CarfMessageTypeIndic_EnumType"/>
+			<xsd:element name="ReportingPeriod" type="xsd:date"/>
+			<xsd:element name="Timestamp" type="xsd:dateTime"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- -->
+	<!-- The Name of a Party, given in fixed Form-->
+	<xsd:complexType name="NamePerson_Type">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">The user must spread the data about the name of a party over up to six elements. The container element for this will be 'NameFix'. </xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="PrecedingTitle" type="stf:StringMin1Max200_Type" minOccurs="0"/>
+			<xsd:element name="Title" type="stf:StringMin1Max200_Type" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="FirstName">
+				<xsd:complexType>
+					<xsd:simpleContent>
+						<xsd:extension base="stf:StringMin1Max200_Type">
+							<xsd:attribute name="xnlNameType" type="stf:StringMin1Max200_Type">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="en">Defines the name type of FirstName. Example: Given Name, Forename, Christian Name, Father's Name, etc. In some countries, FirstName could be a Family Name or a SurName. Use this attribute to define the type for this name.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:attribute>
+						</xsd:extension>
+					</xsd:simpleContent>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="MiddleName" minOccurs="0" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:simpleContent>
+						<xsd:extension base="stf:StringMin1Max200_Type">
+							<xsd:attribute name="xnlNameType" type="stf:StringMin1Max200_Type">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="en">Defines the name type of Middle Name. Example: First name, middle name, maiden name, father's name, given name, etc.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:attribute>
+						</xsd:extension>
+					</xsd:simpleContent>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="NamePrefix" minOccurs="0">
+				<xsd:complexType>
+					<xsd:simpleContent>
+						<xsd:extension base="stf:StringMin1Max200_Type">
+							<xsd:attribute name="xnlNameType" type="stf:StringMin1Max200_Type">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="en">Defines the type of name associated with the NamePrefix. For example the type of name is LastName and this prefix is the prefix for this last name.
+							</xsd:documentation>
+								</xsd:annotation>
+							</xsd:attribute>
+						</xsd:extension>
+					</xsd:simpleContent>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="LastName">
+				<xsd:complexType>
+					<xsd:simpleContent>
+						<xsd:extension base="stf:StringMin1Max200_Type">
+							<xsd:attribute name="xnlNameType" type="stf:StringMin1Max200_Type">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="en">Defines the name type of LastName. Example: Father's name, Family name, Sur Name, Mother's Name, etc. In some countries, LastName could be the given name or first name.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:attribute>
+						</xsd:extension>
+					</xsd:simpleContent>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="GenerationIdentifier" type="stf:StringMin1Max200_Type" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="Suffix" type="stf:StringMin1Max200_Type" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="GeneralSuffix" type="stf:StringMin1Max200_Type" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attribute name="nameType" type="stf:OECDNameType_EnumType" use="optional"/>
+	</xsd:complexType>
+	<!-- -->
+	<!-- Collection of all Data describing a person as a  Party -->
+	<xsd:complexType name="PersonParty_Type">
+		<xsd:sequence>
+			<xsd:element name="ResCountryCode" type="iso:CountryCode_Type" maxOccurs="unbounded"/>
+			<xsd:element name="TIN" type="carf:TIN_Type" maxOccurs="unbounded"/>
+			<xsd:element name="IIN" type="carf:IndividualIN_Type" minOccurs="0" maxOccurs="unbounded">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="en">Individual Identification Number</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Name" type="carf:NamePerson_Type" maxOccurs="unbounded"/>
+			<xsd:element name="Address" type="carf:Address_Type" maxOccurs="unbounded"/>
+			<xsd:element name="Nationality" type="iso:CountryCode_Type" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="BirthInfo">
+				<xsd:annotation>
+					<xsd:documentation>.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="BirthDate" type="xsd:date"/>
+						<xsd:element name="BirthPlace" type="carf:BirthPlace_Type" minOccurs="0"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- -->
+	<!--General Type for Monetary Amounts -->
+	<xsd:complexType name="MonAmnt_Type">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">This data type is to be used whenever monetary amounts are to be communicated. Such amounts shall be given in with full amoutns and two decimals.  The code for the currency in which the value is expressed has to be taken from the ISO codelist 4217 and added in attribute currCode.
+</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleContent>
+			<xsd:extension base="xsd:decimal">
+				<xsd:attribute name="currCode" type="iso:currCode_Type" use="required"/>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<!-- -->
+	<!-- Organisation Identification Number -->
+	<xsd:complexType name="OrganisationIN_Type">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">This is the identification number/identification code for the Entity in question. As the identifier may be not strictly numeric, it is just defined as a string of characters. Attribute 'issuedBy' is required to designate the issuer of the identifier.  Attribute 'INType' defines the type of identification number. </xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleContent>
+			<xsd:extension base="stf:StringMin1Max200_Type">
+				<xsd:attribute name="issuedBy" type="iso:CountryCode_Type" use="optional">
+					<xsd:annotation>
+						<xsd:documentation xml:lang="en">Country code of issuing country, indicating country of Residence (to taxes and other)</xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+				<xsd:attribute name="INType" use="optional">
+					<xsd:annotation>
+						<xsd:documentation xml:lang="en">Identification Number Type</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="stf:StringMin1Max200_Type">
+							<xsd:enumeration value="LEI"/>
+							<xsd:enumeration value="EIN"/>
+							<xsd:enumeration value="BRN"/>
+							<xsd:enumeration value="Other"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:attribute>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<!-- -->
+	<!-- Individual Identification Number -->
+	<xsd:complexType name="IndividualIN_Type">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">This is the identification number/identification code for the Entity in question. As the identifier may be not strictly numeric, it is just defined as a string of characters. Attribute 'issuedBy' is required to designate the issuer of the identifier.  Attribute 'INType' defines the type of identification number. </xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleContent>
+			<xsd:extension base="stf:StringMin1Max200_Type">
+				<xsd:attribute name="issuedBy" type="iso:CountryCode_Type" use="optional">
+					<xsd:annotation>
+						<xsd:documentation xml:lang="en">Country code of issuing country, indicating country of Residence (to taxes and other)</xsd:documentation>
+					</xsd:annotation>
+				</xsd:attribute>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<!-- -->
+	<!-- Collection of all Data describing an organisation as party-->
+	<xsd:complexType name="OrganisationParty_Type">
+		<xsd:sequence>
+			<xsd:element name="ResCountryCode" type="iso:CountryCode_Type" maxOccurs="unbounded"/>
+			<xsd:element name="TIN" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:simpleContent>
+						<xsd:restriction base="carf:TIN_Type">
+							<xsd:minLength value="1"/>
+							<xsd:attribute name="issuedBy" type="iso:CountryCode_Type" use="optional"/>
+							<xsd:attribute name="unknown" type="xsd:boolean" use="optional"/>
+						</xsd:restriction>
+					</xsd:simpleContent>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="IN" type="carf:OrganisationIN_Type" minOccurs="0" maxOccurs="unbounded">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="en">Entity Identification Number - OrganisationIN_Type</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Name" type="carf:NameOrganisation_Type" maxOccurs="unbounded"/>
+			<xsd:element name="Address" type="carf:Address_Type" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- -->
+	<!-- Address Fix -->
+	<xsd:complexType name="AddressFix_Type">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">
+		</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="Street" type="stf:StringMin1Max200_Type" minOccurs="0"/>
+			<xsd:element name="BuildingIdentifier" type="stf:StringMin1Max200_Type" minOccurs="0"/>
+			<xsd:element name="SuiteIdentifier" type="stf:StringMin1Max200_Type" minOccurs="0"/>
+			<xsd:element name="FloorIdentifier" type="stf:StringMin1Max200_Type" minOccurs="0"/>
+			<xsd:element name="DistrictName" type="stf:StringMin1Max200_Type" minOccurs="0"/>
+			<xsd:element name="POB" type="stf:StringMin1Max200_Type" minOccurs="0"/>
+			<xsd:element name="PostCode" type="stf:StringMin1Max200_Type" minOccurs="0"/>
+			<xsd:element name="City" type="stf:StringMin1Max200_Type"/>
+			<xsd:element name="CountrySubentity" type="stf:StringMin1Max200_Type" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!--  -->
+	<!--  The Address of a Party, given in fixed or free Form, possibly in both Forms -->
+	<xsd:complexType name="Address_Type">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">
+		</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="CountryCode" type="iso:CountryCode_Type"/>
+			<xsd:sequence>
+				<xsd:element name="AddressFix" type="carf:AddressFix_Type"/>
+				<xsd:element name="AdditionalAddressInfo" type="stf:StringMin1Max4000_Type" minOccurs="0"/>
+			</xsd:sequence>
+		</xsd:sequence>
+		<xsd:attribute name="legalAddressType" type="stf:OECDLegalAddressType_EnumType" use="optional"/>
+	</xsd:complexType>
+	<!--  -->
+	<!-- Organisation name -->
+	<xsd:complexType name="NameOrganisation_Type">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">Name of organisation</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleContent>
+			<xsd:extension base="stf:StringMin1Max200_Type">
+				<xsd:attribute name="nameType" type="stf:OECDNameType_EnumType" use="optional"/>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<!-- -->
+	<!-- TIN -->
+	<xsd:complexType name="TIN_Type">
+		<xsd:simpleContent>
+			<xsd:extension base="stf:StringMin0Max200_Type">
+				<xsd:attribute name="issuedBy" type="iso:CountryCode_Type" use="optional"/>
+				<xsd:attribute name="unknown" type="xsd:boolean" use="optional"/>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<!-- -->
+	<!--The place of birth -->
+	<xsd:complexType name="BirthPlace_Type">
+		<xsd:annotation>
+			<xsd:documentation>This element provides information about the place of birth. This element must be filled in at least with the city and the country of birth (either the current jurisdiction identified by 2-characters country code or a former jurisdiction identified by a name).</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="City" type="stf:StringMin1Max200_Type"/>
+			<xsd:element name="CitySubentity" type="stf:StringMin1Max200_Type" minOccurs="0"/>
+			<xsd:element name="CountryInfo">
+				<xsd:complexType>
+					<xsd:choice>
+						<xsd:element name="CountryCode" type="iso:CountryCode_Type"/>
+						<xsd:element name="FormerCountryName" type="stf:StringMin1Max200_Type"/>
+					</xsd:choice>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!-- -->
+	<!-- CARF Body Type - CARF Report  -->
+	<xsd:complexType name="CARFBody_Type">
+		<xsd:sequence>
+			<xsd:element name="RCASP" type="carf:RCASP_Type"/>
+			<xsd:element name="CryptoUsers" type="carf:CryptoUsers_Type" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!--+++++++++++++++++++++++++++++++++++++++++++++++++++++++++ Schema  element ++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!-- CarfOECD File Message structure  -->
+	<!-- -->
+	<!-- CARF Message structure  -->
+	<xsd:element name="CARF_OECD">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="MessageSpec" type="carf:MessageSpec_Type"/>
+				<xsd:element name="CARFBody" type="carf:CARFBody_Type" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+			<xsd:attribute name="version" type="stf:StringMin1Max10_Type">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="en">CARF Version</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>
+</script>
+<script type="text/plain" id="emb-s1"><?xml version="1.0" encoding="UTF-8"?>
+<carf:CARF_OECD xmlns:carf="urn:oecd:ties:carf:v1" xmlns:stf="urn:oecd:ties:carfstf:v5" version="1.4">
+  <carf:MessageSpec>
+    <carf:SendingEntityIN>0123456789012345</carf:SendingEntityIN>
+    <carf:TransmittingCountry>ID</carf:TransmittingCountry>
+    <carf:ReceivingCountry>ID</carf:ReceivingCountry>
+    <carf:MessageType>CARF</carf:MessageType>
+    <carf:Contact>compliance@adag.example.id</carf:Contact>
+    <carf:MessageRefId>ID2026ID-ADAG-000001</carf:MessageRefId>
+    <carf:MessageTypeIndic>CARF701</carf:MessageTypeIndic>
+    <carf:ReportingPeriod>2026-12-31</carf:ReportingPeriod>
+    <carf:Timestamp>2027-03-15T09:45:30</carf:Timestamp>
+  </carf:MessageSpec>
+  <carf:CARFBody>
+    <carf:RCASP><carf:RCASP_ID><carf:Entity><carf:ResCountryCode>ID</carf:ResCountryCode><carf:TIN issuedBy="ID">0123456789012345</carf:TIN><carf:Name>PT Aset Kripto ADAG Indonesia</carf:Name><carf:Address legalAddressType="OECD304"><carf:CountryCode>ID</carf:CountryCode><carf:AddressFix><carf:City>Jakarta Selatan</carf:City></carf:AddressFix></carf:Address></carf:Entity></carf:RCASP_ID><carf:Nexus>CARF901</carf:Nexus><carf:DocSpec><stf:DocTypeIndic>OECD1</stf:DocTypeIndic><stf:DocRefId>ID2026ADAG-R-0001</stf:DocRefId></carf:DocSpec></carf:RCASP>
+    <carf:CryptoUsers>
+      <carf:UserID><carf:Individual><carf:ResCountryCode>ID</carf:ResCountryCode><carf:TIN issuedBy="ID">3171015503900002</carf:TIN><carf:Name><carf:FirstName>Maria</carf:FirstName><carf:LastName>Tjandra</carf:LastName></carf:Name><carf:Address legalAddressType="OECD302"><carf:CountryCode>ID</carf:CountryCode><carf:AddressFix><carf:City>Jakarta Selatan</carf:City></carf:AddressFix></carf:Address><carf:BirthInfo><carf:BirthDate>1990-03-15</carf:BirthDate><carf:BirthPlace><carf:City>Jakarta</carf:City><carf:CountryInfo><carf:CountryCode>ID</carf:CountryCode></carf:CountryInfo></carf:BirthPlace></carf:BirthInfo></carf:Individual></carf:UserID>
+      <carf:RelevantTransactions><carf:CryptoAsset>Bitcoin</carf:CryptoAsset><carf:SaldoCrypto>0.045000</carf:SaldoCrypto><carf:CryptoFiatIn><carf:NumberofTransactions>23</carf:NumberofTransactions><carf:Amount currCode="USD">3800.00</carf:Amount><carf:NumberofUnits>0.045000</carf:NumberofUnits></carf:CryptoFiatIn></carf:RelevantTransactions>
+      <carf:RelevantTransactions><carf:CryptoAsset>Ether</carf:CryptoAsset><carf:SaldoCrypto>0.550000</carf:SaldoCrypto><carf:CryptoFiatIn><carf:NumberofTransactions>20</carf:NumberofTransactions><carf:Amount currCode="USD">2950.00</carf:Amount><carf:NumberofUnits>1.250000</carf:NumberofUnits></carf:CryptoFiatIn></carf:RelevantTransactions>
+      <carf:RelevantTransactions><carf:CryptoAsset>Ether</carf:CryptoAsset><carf:SaldoCrypto>0.550000</carf:SaldoCrypto><carf:CryptoFiatOut><carf:NumberofTransactions>12</carf:NumberofTransactions><carf:Amount currCode="USD">1760.00</carf:Amount><carf:NumberofUnits>0.700000</carf:NumberofUnits></carf:CryptoFiatOut></carf:RelevantTransactions>
+      <carf:SaldoDeposit>1250000.00</carf:SaldoDeposit><carf:DocSpec><stf:DocTypeIndic>OECD1</stf:DocTypeIndic><stf:DocRefId>ID2026ADAG-U-0001</stf:DocRefId></carf:DocSpec>
+    </carf:CryptoUsers>
+    <carf:CryptoUsers>
+      <carf:UserID><carf:Entity><carf:ResCountryCode>ID</carf:ResCountryCode><carf:TIN issuedBy="ID">0198765432100001</carf:TIN><carf:Name>PT Sierra Investama</carf:Name><carf:Address legalAddressType="OECD304"><carf:CountryCode>ID</carf:CountryCode><carf:AddressFix><carf:City>Surabaya</carf:City></carf:AddressFix></carf:Address></carf:Entity></carf:UserID>
+      <carf:RelevantTransactions><carf:CryptoAsset>Litecoin</carf:CryptoAsset><carf:SaldoCrypto>0.000000</carf:SaldoCrypto><carf:CryptoToCryptoOut><carf:NumberofTransactions>1</carf:NumberofTransactions><carf:Amount currCode="USD">74840.00</carf:Amount><carf:NumberofUnits>1000.000000</carf:NumberofUnits></carf:CryptoToCryptoOut></carf:RelevantTransactions>
+      <carf:RelevantTransactions><carf:CryptoAsset>Cardano</carf:CryptoAsset><carf:SaldoCrypto>50.000000</carf:SaldoCrypto><carf:CryptoToCryptoIn><carf:NumberofTransactions>1</carf:NumberofTransactions><carf:Amount currCode="USD">74840.00</carf:Amount><carf:NumberofUnits>250.000000</carf:NumberofUnits></carf:CryptoToCryptoIn></carf:RelevantTransactions>
+      <carf:RelevantTransactions><carf:CryptoAsset>Cardano</carf:CryptoAsset><carf:SaldoCrypto>50.000000</carf:SaldoCrypto><carf:CryptoToCryptoOut><carf:NumberofTransactions>1</carf:NumberofTransactions><carf:Amount currCode="USD">52340.00</carf:Amount><carf:NumberofUnits>200.000000</carf:NumberofUnits></carf:CryptoToCryptoOut></carf:RelevantTransactions>
+      <carf:RelevantTransactions><carf:CryptoAsset>Polkadot</carf:CryptoAsset><carf:SaldoCrypto>8.000000</carf:SaldoCrypto><carf:CryptoToCryptoIn><carf:NumberofTransactions>1</carf:NumberofTransactions><carf:Amount currCode="USD">52340.00</carf:Amount><carf:NumberofUnits>8.000000</carf:NumberofUnits></carf:CryptoToCryptoIn></carf:RelevantTransactions>
+      <carf:SaldoDeposit>0.00</carf:SaldoDeposit><carf:DocSpec><stf:DocTypeIndic>OECD1</stf:DocTypeIndic><stf:DocRefId>ID2026ADAG-U-0002</stf:DocRefId></carf:DocSpec>
+    </carf:CryptoUsers>
+    <carf:CryptoUsers>
+      <carf:UserID><carf:Individual><carf:ResCountryCode>ID</carf:ResCountryCode><carf:ResCountryCode>SG</carf:ResCountryCode><carf:TIN issuedBy="ID">3273010101880003</carf:TIN><carf:TIN issuedBy="SG">S8812345A</carf:TIN><carf:Name><carf:FirstName>Leo</carf:FirstName><carf:LastName>Hartanto</carf:LastName></carf:Name><carf:Address legalAddressType="OECD302"><carf:CountryCode>ID</carf:CountryCode><carf:AddressFix><carf:City>Bandung</carf:City></carf:AddressFix></carf:Address><carf:BirthInfo><carf:BirthDate>1988-01-01</carf:BirthDate><carf:BirthPlace><carf:City>Bandung</carf:City><carf:CountryInfo><carf:CountryCode>ID</carf:CountryCode></carf:CountryInfo></carf:BirthPlace></carf:BirthInfo></carf:Individual></carf:UserID>
+      <carf:RelevantTransactions><carf:CryptoAsset>Ether</carf:CryptoAsset><carf:SaldoCrypto>0.850000</carf:SaldoCrypto><carf:CryptoTransferIn><carf:TransferType>CARF502</carf:TransferType><carf:NumberofTransactions>12</carf:NumberofTransactions><carf:Amount currCode="USD">3000.00</carf:Amount><carf:NumberofUnits>1.200000</carf:NumberofUnits></carf:CryptoTransferIn></carf:RelevantTransactions>
+      <carf:RelevantTransactions><carf:CryptoAsset>Ether</carf:CryptoAsset><carf:SaldoCrypto>0.850000</carf:SaldoCrypto><carf:CryptoTransferOut><carf:TransferType>CARF601</carf:TransferType><carf:NumberofTransactions>1</carf:NumberofTransactions><carf:Amount currCode="USD">1250.00</carf:Amount><carf:NumberofUnits>0.500000</carf:NumberofUnits></carf:CryptoTransferOut></carf:RelevantTransactions>
+      <carf:RelevantTransactions><carf:CryptoAsset>Ether</carf:CryptoAsset><carf:SaldoCrypto>0.850000</carf:SaldoCrypto><carf:TransferWallet><carf:Amount currCode="USD">2100.00</carf:Amount><carf:NumberofUnits>0.850000</carf:NumberofUnits></carf:TransferWallet></carf:RelevantTransactions>
+      <carf:RelevantTransactions><carf:CryptoAsset>Capacity</carf:CryptoAsset><carf:SaldoCrypto>500.000000</carf:SaldoCrypto><carf:CryptoTransferIn><carf:TransferType>CARF501</carf:TransferType><carf:NumberofTransactions>1</carf:NumberofTransactions><carf:Amount currCode="USD">500.00</carf:Amount><carf:NumberofUnits>500.000000</carf:NumberofUnits></carf:CryptoTransferIn></carf:RelevantTransactions>
+      <carf:SaldoDeposit>480.50</carf:SaldoDeposit><carf:DocSpec><stf:DocTypeIndic>OECD1</stf:DocTypeIndic><stf:DocRefId>ID2026ADAG-U-0003</stf:DocRefId></carf:DocSpec>
+    </carf:CryptoUsers>
+    <carf:CryptoUsers>
+      <carf:UserID><carf:Individual><carf:ResCountryCode>DE</carf:ResCountryCode><carf:TIN issuedBy="DE">12345678901</carf:TIN><carf:Name><carf:FirstName>Hans</carf:FirstName><carf:LastName>Mueller</carf:LastName></carf:Name><carf:Address legalAddressType="OECD302"><carf:CountryCode>DE</carf:CountryCode><carf:AddressFix><carf:City>Berlin</carf:City></carf:AddressFix></carf:Address><carf:BirthInfo><carf:BirthDate>1979-07-22</carf:BirthDate><carf:BirthPlace><carf:City>Hamburg</carf:City><carf:CountryInfo><carf:CountryCode>DE</carf:CountryCode></carf:CountryInfo></carf:BirthPlace></carf:BirthInfo></carf:Individual></carf:UserID>
+      <carf:RelevantTransactions><carf:CryptoAsset>Bitcoin</carf:CryptoAsset><carf:SaldoCrypto>1.850000</carf:SaldoCrypto><carf:CryptoFiatIn><carf:NumberofTransactions>5</carf:NumberofTransactions><carf:Amount currCode="USD">150000.00</carf:Amount><carf:NumberofUnits>1.850000</carf:NumberofUnits></carf:CryptoFiatIn></carf:RelevantTransactions>
+      <carf:SaldoDeposit>0.00</carf:SaldoDeposit><carf:DocSpec><stf:DocTypeIndic>OECD1</stf:DocTypeIndic><stf:DocRefId>ID2026ADAG-U-0004</stf:DocRefId></carf:DocSpec>
+    </carf:CryptoUsers>
+    <carf:CryptoUsers>
+      <carf:UserID><carf:Entity><carf:ResCountryCode>ID</carf:ResCountryCode><carf:TIN issuedBy="ID">0112233445566778</carf:TIN><carf:Name>PT Nusa Katering Prima</carf:Name><carf:Address legalAddressType="OECD304"><carf:CountryCode>ID</carf:CountryCode><carf:AddressFix><carf:City>Denpasar</carf:City></carf:AddressFix></carf:Address></carf:Entity></carf:UserID>
+      <carf:ControllingPerson><carf:Individual><carf:ResCountryCode>ID</carf:ResCountryCode><carf:TIN issuedBy="ID">5171010505750004</carf:TIN><carf:Name><carf:FirstName>Wayan</carf:FirstName><carf:LastName>Suardana</carf:LastName></carf:Name><carf:Address legalAddressType="OECD302"><carf:CountryCode>ID</carf:CountryCode><carf:AddressFix><carf:City>Denpasar</carf:City></carf:AddressFix></carf:Address><carf:BirthInfo><carf:BirthDate>1975-05-05</carf:BirthDate><carf:BirthPlace><carf:City>Denpasar</carf:City><carf:CountryInfo><carf:CountryCode>ID</carf:CountryCode></carf:CountryInfo></carf:BirthPlace></carf:BirthInfo></carf:Individual><carf:CtrlgPersonType>CARF801</carf:CtrlgPersonType></carf:ControllingPerson>
+      <carf:RelevantTransactions><carf:CryptoAsset>Bitcoin</carf:CryptoAsset><carf:SaldoCrypto>1.850000</carf:SaldoCrypto><carf:CryptoTransferIn><carf:TransferType>CARF506</carf:TransferType><carf:NumberofTransactions>1</carf:NumberofTransactions><carf:Amount currCode="USD">155000.00</carf:Amount><carf:NumberofUnits>1.850000</carf:NumberofUnits></carf:CryptoTransferIn></carf:RelevantTransactions>
+      <carf:RelevantTransactions><carf:CryptoAsset>Ether</carf:CryptoAsset><carf:SaldoCrypto>25.000000</carf:SaldoCrypto><carf:CryptoTransferIn><carf:TransferType>CARF506</carf:TransferType><carf:NumberofTransactions>1</carf:NumberofTransactions><carf:Amount currCode="USD">61000.00</carf:Amount><carf:NumberofUnits>25.000000</carf:NumberofUnits></carf:CryptoTransferIn></carf:RelevantTransactions>
+      <carf:SaldoDeposit>3200000.00</carf:SaldoDeposit><carf:DocSpec><stf:DocTypeIndic>OECD1</stf:DocTypeIndic><stf:DocRefId>ID2026ADAG-U-0005</stf:DocRefId></carf:DocSpec>
+    </carf:CryptoUsers>
+  </carf:CARFBody>
+</carf:CARF_OECD>
+</script>
+<script type="text/plain" id="emb-s2"><?xml version="1.0" encoding="UTF-8"?>
+<carf:CARF_OECD xmlns:carf="urn:oecd:ties:carf:v1" xmlns:stf="urn:oecd:ties:carfstf:v5" version="1.4">
+  <carf:MessageSpec>
+    <carf:SendingEntityIN>0123456789012345</carf:SendingEntityIN>
+    <carf:TransmittingCountry>ID</carf:TransmittingCountry>
+    <carf:ReceivingCountry>ID</carf:ReceivingCountry>
+    <carf:MessageType>CARF</carf:MessageType>
+    <carf:Contact>compliance@adag.example.id</carf:Contact>
+    <carf:MessageRefId>ID2026ID-ADAG-000002</carf:MessageRefId>
+    <carf:MessageTypeIndic>CARF703</carf:MessageTypeIndic>
+    <carf:ReportingPeriod>2026-12-31</carf:ReportingPeriod>
+    <carf:Timestamp>2027-03-15T09:45:30</carf:Timestamp>
+  </carf:MessageSpec>
+  <carf:CARFBody>
+    <carf:RCASP><carf:RCASP_ID><carf:Entity><carf:ResCountryCode>ID</carf:ResCountryCode><carf:TIN issuedBy="ID">0123456789012345</carf:TIN><carf:Name>PT Aset Kripto ADAG Indonesia</carf:Name><carf:Address legalAddressType="OECD304"><carf:CountryCode>ID</carf:CountryCode><carf:AddressFix><carf:City>Jakarta Selatan</carf:City></carf:AddressFix></carf:Address></carf:Entity></carf:RCASP_ID><carf:Nexus>CARF901</carf:Nexus><carf:DocSpec><stf:DocTypeIndic>OECD1</stf:DocTypeIndic><stf:DocRefId>ID2026ADAG-R-0002</stf:DocRefId></carf:DocSpec></carf:RCASP>
+  </carf:CARFBody>
+</carf:CARF_OECD>
+</script>
+<script type="text/plain" id="emb-s3"><?xml version="1.0" encoding="UTF-8"?>
+<carf:CARF_OECD xmlns:carf="urn:oecd:ties:carf:v1" xmlns:stf="urn:oecd:ties:carfstf:v5" version="1.4">
+  <carf:MessageSpec>
+    <carf:SendingEntityIN>0123456789012345</carf:SendingEntityIN>
+    <carf:TransmittingCountry>ID</carf:TransmittingCountry>
+    <carf:ReceivingCountry>ID</carf:ReceivingCountry>
+    <carf:MessageType>CARF</carf:MessageType>
+    <carf:Contact>compliance@adag.example.id</carf:Contact>
+    <carf:MessageRefId>ADAG-2026-000003</carf:MessageRefId>
+    <carf:MessageTypeIndic>CARF701</carf:MessageTypeIndic>
+    <carf:ReportingPeriod>2026-12-30</carf:ReportingPeriod>
+    <carf:Timestamp>2027-03-15T09:45:30</carf:Timestamp>
+  </carf:MessageSpec>
+  <carf:CARFBody>
+    <carf:RCASP><carf:RCASP_ID><carf:Entity><carf:ResCountryCode>ID</carf:ResCountryCode><carf:TIN issuedBy="ID">0123456789012345</carf:TIN><carf:Name>PT Aset Kripto ADAG Indonesia</carf:Name><carf:Address legalAddressType="OECD304"><carf:CountryCode>ID</carf:CountryCode><carf:AddressFix><carf:City>Jakarta Selatan</carf:City></carf:AddressFix></carf:Address></carf:Entity></carf:RCASP_ID><carf:Nexus>CARF901</carf:Nexus><carf:DocSpec><stf:DocTypeIndic>OECD1</stf:DocTypeIndic><stf:DocRefId>ID2026ADAG-R-0001</stf:DocRefId></carf:DocSpec></carf:RCASP>
+    <carf:CryptoUsers>
+      <carf:UserID><carf:Individual><carf:ResCountryCode>ID</carf:ResCountryCode><carf:TIN issuedBy="ID">317101550390</carf:TIN><carf:Name><carf:FirstName>Maria</carf:FirstName><carf:LastName>Tjandra</carf:LastName></carf:Name><carf:Address legalAddressType="OECD302"><carf:CountryCode>ID</carf:CountryCode><carf:AddressFix><carf:City></carf:City></carf:AddressFix></carf:Address><carf:BirthInfo><carf:BirthDate>1990-03-15</carf:BirthDate></carf:BirthInfo></carf:Individual></carf:UserID>
+      <carf:RelevantTransactions><carf:CryptoAsset>BTC</carf:CryptoAsset><carf:SaldoCrypto>0.045000</carf:SaldoCrypto><carf:CryptoFiatIn><carf:NumberofTransactions>23</carf:NumberofTransactions><carf:Amount currCode="USD">3800.5</carf:Amount><carf:NumberofUnits>0.0450001</carf:NumberofUnits></carf:CryptoFiatIn></carf:RelevantTransactions>
+      <carf:SaldoDeposit>1250000.00</carf:SaldoDeposit><carf:DocSpec><stf:DocTypeIndic>OECD1</stf:DocTypeIndic><stf:DocRefId>ID2026ADAG-U-0001</stf:DocRefId></carf:DocSpec>
+    </carf:CryptoUsers>
+    <carf:CryptoUsers>
+      <carf:UserID><carf:Individual><carf:ResCountryCode>ID</carf:ResCountryCode><carf:TIN issuedBy="ID">3171015503900002</carf:TIN><carf:Name><carf:FirstName>Maria</carf:FirstName><carf:LastName>Tjandra</carf:LastName></carf:Name><carf:Address legalAddressType="OECD302"><carf:CountryCode>ID</carf:CountryCode><carf:AddressFix><carf:City>Jakarta Selatan</carf:City></carf:AddressFix></carf:Address><carf:BirthInfo><carf:BirthDate>2030-03-15</carf:BirthDate></carf:BirthInfo></carf:Individual></carf:UserID>
+      <carf:RelevantTransactions><carf:CryptoAsset>Ether</carf:CryptoAsset><carf:SaldoCrypto>0.010000</carf:SaldoCrypto><carf:CryptoFiatIn><carf:NumberofTransactions>2</carf:NumberofTransactions><carf:Amount currCode="USD">100.00</carf:Amount><carf:NumberofUnits>0.100000</carf:NumberofUnits></carf:CryptoFiatIn><carf:CryptoFiatOut><carf:NumberofTransactions>1</carf:NumberofTransactions><carf:Amount currCode="USD">50.00</carf:Amount><carf:NumberofUnits>0.050000</carf:NumberofUnits></carf:CryptoFiatOut></carf:RelevantTransactions>
+      <carf:RelevantTransactions><carf:CryptoAsset>Ether</carf:CryptoAsset><carf:SaldoCrypto>9.000000</carf:SaldoCrypto><carf:CryptoTransferIn><carf:TransferType>CARF509</carf:TransferType><carf:NumberofTransactions>1</carf:NumberofTransactions><carf:Amount currCode="USD">20.00</carf:Amount><carf:NumberofUnits>0.010000</carf:NumberofUnits></carf:CryptoTransferIn></carf:RelevantTransactions>
+      <carf:SaldoDeposit>1250000.00</carf:SaldoDeposit><carf:DocSpec><stf:DocTypeIndic>OECD1</stf:DocTypeIndic><stf:DocRefId>ID2026ADAG-U-0001</stf:DocRefId></carf:DocSpec>
+    </carf:CryptoUsers>
+    <carf:CryptoUsers>
+      <carf:UserID><carf:Individual><carf:ResCountryCode>SG</carf:ResCountryCode><carf:TIN issuedBy="SG">S8812345A</carf:TIN><carf:Name><carf:FirstName>Leo</carf:FirstName><carf:LastName>Hartanto</carf:LastName></carf:Name><carf:Address legalAddressType="OECD302"><carf:CountryCode>SG</carf:CountryCode><carf:AddressFix><carf:City>Singapore</carf:City></carf:AddressFix></carf:Address><carf:BirthInfo><carf:BirthDate>1988-01-01</carf:BirthDate></carf:BirthInfo></carf:Individual></carf:UserID>
+      <carf:ControllingPerson><carf:Individual><carf:ResCountryCode>ID</carf:ResCountryCode><carf:TIN issuedBy="ID">5171010505750004</carf:TIN><carf:Name><carf:FirstName>Wayan</carf:FirstName><carf:LastName>Suardana</carf:LastName></carf:Name><carf:Address legalAddressType="OECD302"><carf:CountryCode>ID</carf:CountryCode><carf:AddressFix><carf:City>Denpasar</carf:City></carf:AddressFix></carf:Address><carf:BirthInfo><carf:BirthDate>1975-05-05</carf:BirthDate></carf:BirthInfo></carf:Individual><carf:CtrlgPersonType>CARF801</carf:CtrlgPersonType></carf:ControllingPerson>
+      <carf:RelevantTransactions><carf:CryptoAsset>Ether</carf:CryptoAsset><carf:SaldoCrypto>0.850000</carf:SaldoCrypto><carf:CryptoTransferIn><carf:TransferType>CARF502</carf:TransferType><carf:NumberofTransactions>12</carf:NumberofTransactions><carf:Amount currCode="USD">3000.00</carf:Amount><carf:NumberofUnits>1.200000</carf:NumberofUnits></carf:CryptoTransferIn></carf:RelevantTransactions>
+      <carf:SaldoDeposit>480.50</carf:SaldoDeposit><carf:DocSpec><stf:DocTypeIndic>OECD1</stf:DocTypeIndic><stf:DocRefId>ID2026ADAG-U-0009</stf:DocRefId></carf:DocSpec>
+    </carf:CryptoUsers>
+  </carf:CARFBody>
+</carf:CARF_OECD>
+</script>
+
+<script>
+// ============================================================
+// 0. Loading (fetch from data/ when hosted; embedded fallback otherwise)
+// ============================================================
+const XS = "http://www.w3.org/2001/XMLSchema";
+const FILES = {
+  oecd: { path: "data/CARFXML_v1_4.xsd", emb: "emb-oecd" },
+  dom:  { path: "data/CARFXML_v1_4_domestik.xsd", emb: "emb-dom" },
+};
+const SAMPLES = [
+  { id: "s1", name: "sample_domestik_2026.xml — berkas domestik lengkap (5 pengguna, 3 yurisdiksi)", path: "data/sample_domestik_2026.xml", emb: "emb-s1" },
+  { id: "s2", name: "sample_nihil_2026.xml — laporan nihil (CARF703)", path: "data/sample_nihil_2026.xml", emb: "emb-s2" },
+  { id: "s3", name: "sample_error_2026.xml — berkas dengan kesalahan yang disengaja", path: "data/sample_error_2026.xml", emb: "emb-s3" },
+];
+const state = { schemas: {}, samples: {}, active: null, activeName: "", findings: null, source: "" };
+
+async function loadText(path, embId) {
+  try {
+    const r = await fetch(path, { cache: "no-store" });
+    if (r.ok) { state.source = "data/ (fetch)"; return await r.text(); }
+    throw new Error(r.status);
+  } catch (e) {
+    state.source = "tertanam dalam halaman";
+    return document.getElementById(embId).textContent;
+  }
+}
+function parseXML(text) {
+  const d = new DOMParser().parseFromString(text, "application/xml");
+  const pe = d.getElementsByTagName("parsererror");
+  if (pe.length) throw new Error("XML tidak dapat diurai: " + pe[0].textContent.slice(0, 200));
+  return d;
+}
+
+// ============================================================
+// 1. XSD model: content model per complexType, element → type resolution
+// ============================================================
+function buildSchema(text, label) {
+  const d = parseXML(text);
+  const root = d.documentElement;
+  const types = {}, globals = {};
+  for (const ct of root.children) {
+    if (ct.namespaceURI !== XS) continue;
+    if (ct.localName === "complexType" && ct.getAttribute("name")) types[ct.getAttribute("name")] = ct;
+    if (ct.localName === "element" && ct.getAttribute("name")) globals[ct.getAttribute("name")] = ct;
+  }
+  return { label, doc: d, types, globals, ns: root.getAttribute("targetNamespace"), version: root.getAttribute("version"), text };
+}
+// returns {elements: {name:{decl,min,max,choiceId}}, choices: [{id,max,names:[...]}], attrs:{name:{use}}}
+function contentModel(ct, schema) {
+  const m = { elements: {}, choices: [], attrs: {} };
+  let cid = 0;
+  function walk(node, choiceId) {
+    for (const c of node.children) {
+      if (c.namespaceURI !== XS) continue;
+      const ln = c.localName;
+      if (ln === "sequence" || ln === "all") walk(c, choiceId);
+      else if (ln === "choice") {
+        const id = ++cid; const max = c.getAttribute("maxOccurs") || "1";
+        m.choices.push({ id, max, min: c.getAttribute("minOccurs") || "1", names: [] });
+        walk(c, id);
+      } else if (ln === "element") {
+        const name = c.getAttribute("name") || (c.getAttribute("ref") || "").split(":").pop();
+        m.elements[name] = { decl: c, min: c.getAttribute("minOccurs") ?? "1", max: c.getAttribute("maxOccurs") || "1", choiceId: choiceId || 0 };
+        if (choiceId) m.choices.find(x => x.id === choiceId).names.push(name);
+      } else if (ln === "attribute") {
+        m.attrs[c.getAttribute("name")] = { use: c.getAttribute("use") || "optional" };
+      } else if (ln === "complexContent" || ln === "simpleContent") {
+        for (const e of c.children) {
+          if (e.localName === "extension" || e.localName === "restriction") {
+            const base = (e.getAttribute("base") || "").split(":").pop();
+            if (schema.types[base]) { const bm = contentModel(schema.types[base], schema); Object.assign(m.elements, bm.elements); Object.assign(m.attrs, bm.attrs); m.choices.push(...bm.choices); }
+            walk(e, choiceId);
+          }
+        }
+      }
+    }
+  }
+  walk(ct, 0);
+  return m;
+}
+function typeOf(decl, schema) {
+  const t = decl.getAttribute("type");
+  if (t) { const local = t.split(":").pop(); return schema.types[local] ? { ct: schema.types[local], name: local } : null; }
+  for (const c of decl.children) if (c.namespaceURI === XS && c.localName === "complexType") return { ct: c, name: "(anonim)" };
+  return null;
+}
+function xpathOf(el) {
+  const parts = [];
+  for (let n = el; n && n.nodeType === 1; n = n.parentNode) {
+    let idx = 1; for (let s = n.previousElementSibling; s; s = s.previousElementSibling) if (s.localName === n.localName) idx++;
+    parts.unshift(n.localName + (idx > 1 ? `[${idx}]` : ""));
+  }
+  return "/" + parts.join("/");
+}
+// Structural check against a schema. Returns findings[].
+function structuralCheck(doc, schema) {
+  const out = [];
+  const root = doc.documentElement;
+  const gdecl = schema.globals[root.localName];
+  if (!gdecl) { out.push({ code: "L1-ROOT", sev: "error", path: "/" + root.localName, msg: `Elemen akar '${root.localName}' tidak dikenal dalam skema ${schema.label}` }); return out; }
+  if (root.namespaceURI !== schema.ns) out.push({ code: "L1-NS", sev: "error", path: "/" + root.localName, msg: `Ruang nama dokumen (${root.namespaceURI}) tidak sama dengan skema (${schema.ns})` });
+  function walk(el, t) {
+    if (!t) return;
+    const m = contentModel(t.ct, schema);
+    const kids = [...el.children];
+    for (const k of kids) {
+      const spec = m.elements[k.localName];
+      if (!spec) { out.push({ code: "L1-UNEXPECTED", sev: "error", path: xpathOf(k), msg: `Elemen '${k.localName}' tidak dikenal dalam tipe ${t.name} (skema ${schema.label})` }); continue; }
+      walk(k, typeOf(spec.decl, schema));
+    }
+    for (const [name, spec] of Object.entries(m.elements)) {
+      if (spec.choiceId) continue;
+      if (parseInt(spec.min) > 0 && !kids.some(k => k.localName === name)) out.push({ code: "L1-MISSING", sev: "error", path: xpathOf(el) + "/" + name, msg: `Elemen wajib '${name}' tidak ada dalam ${t.name}` });
+    }
+    for (const ch of m.choices) {
+      const present = [...new Set(kids.filter(k => ch.names.includes(k.localName)).map(k => k.localName))];
+      if (ch.max === "1" && present.length > 1) out.push({ code: "L1-CHOICE", sev: "error", path: xpathOf(el), msg: `Lebih dari satu cabang xsd:choice dalam satu ${t.name}: ${present.join(", ")}. Setiap kategori harus berada di blok terpisah.` });
+      const allBranchesRequired = ch.names.every(n => parseInt(m.elements[n].min) > 0);
+      if (parseInt(ch.min) > 0 && allBranchesRequired && present.length === 0) out.push({ code: "L1-CHOICE-MISSING", sev: "error", path: xpathOf(el), msg: `Salah satu dari ${ch.names.join("/")} wajib ada dalam ${t.name}` });
+    }
+    for (const [an, a] of Object.entries(m.attrs)) if (a.use === "required" && !el.hasAttribute(an)) out.push({ code: "L1-ATTR", sev: "error", path: xpathOf(el) + "/@" + an, msg: `Atribut wajib '${an}' tidak ada pada ${el.localName}` });
+  }
+  walk(root, typeOf(gdecl, schema));
+  return out;
+}
+
+// ============================================================
+// 2. Business rules (L0, L2, L3, L4)
+// ============================================================
+const DTI_MINI = { // small mirror of the ISO 24165 registry (illustrative)
+  "Bitcoin": "4H95J0R2X", "Ether": "X9J9K5S0D", "Litecoin": "F2X0VTCZ7", "Cardano": "JK2KT0LSL", "Polkadot": "3NDSK8JQK", "Solana": "20J63Z6DP",
+};
+function q(el, name) { return [...el.children].filter(c => c.localName === name); }
+function q1(el, name) { return q(el, name)[0]; }
+function txt(el, name) { const c = q1(el, name); return c ? c.textContent.trim() : null; }
+
+function runRules(doc, fileName) {
+  const F = [];
+  const add = (layer, code, sev, path, msg, docref) => F.push({ layer, code, sev, path, msg, docref: docref || null });
+  const root = doc.documentElement;
+  const ms = q1(root, "MessageSpec");
+  const bodies = q(root, "CARFBody");
+  // ---- L0
+  const txtLen = new XMLSerializer().serializeToString(doc).length;
+  add("L0", "DJP-L0-SIZE", txtLen > 50e6 ? "error" : "info", "/", `Ukuran dokumen ${(txtLen / 1024).toFixed(1)} KB (batas ilustratif 50 MB)`);
+  if (!/\.xml$/i.test(fileName)) add("L0", "DJP-L0-NAME", "warn", "/", `Nama berkas '${fileName}' tidak berakhiran .xml`);
+  if (!ms) { add("L0", "DJP-L0-MSGSPEC", "error", "/CARF_OECD", "MessageSpec tidak ditemukan"); return F; }
+  // ---- L2 message level
+  const msgRef = txt(ms, "MessageRefId") || "";
+  const tc = txt(ms, "TransmittingCountry"), rc = txt(ms, "ReceivingCountry");
+  const period = txt(ms, "ReportingPeriod") || "";
+  const year = period.slice(0, 4);
+  if (!new RegExp(`^${tc}${year}${rc}`).test(msgRef)) add("L2", "DJP-L2-MSGREF", "error", "/CARF_OECD/MessageSpec/MessageRefId", `MessageRefId '${msgRef}' tidak berawalan ${tc}${year}${rc} (kode negara pengirim, tahun periode, kode negara penerima)`);
+  if (!/-12-31$/.test(period)) add("L2", "DJP-L2-PERIOD", "error", "/CARF_OECD/MessageSpec/ReportingPeriod", `ReportingPeriod '${period}' harus tanggal terakhir periode (yyyy-12-31)`);
+  const indic = txt(ms, "MessageTypeIndic");
+  const docTypes = [...doc.getElementsByTagName("*")].filter(e => e.localName === "DocTypeIndic").map(e => e.textContent.trim());
+  if (indic === "CARF701" && docTypes.some(t => t === "OECD2" || t === "OECD3")) add("L2", "DJP-L2-INDIC", "error", "/CARF_OECD/MessageSpec/MessageTypeIndic", "CARF701 (data baru) tidak boleh memuat OECD2/OECD3");
+  if (indic === "CARF702" && docTypes.some(t => t === "OECD1")) add("L2", "DJP-L2-INDIC", "error", "/CARF_OECD/MessageSpec/MessageTypeIndic", "CARF702 (koreksi) tidak boleh memuat OECD1");
+  if (indic === "CARF703") {
+    const users = bodies.flatMap(b => q(b, "CryptoUsers"));
+    if (users.length) add("L2", "DJP-L2-NIL", "error", "/CARF_OECD/CARFBody", "CARF703 (nihil) tidak boleh memuat CryptoUsers");
+    else add("L2", "DJP-L2-NIL", "info", "/CARF_OECD/CARFBody", "Laporan nihil domestik: CARFBody hanya memuat RCASP (Pasal 41 ayat (8) PMK 108/2025)");
+  }
+  // ---- record level
+  const seenDoc = new Map(), seenUser = new Map();
+  const saldoByUserAsset = new Map();
+  for (const b of bodies) {
+    const rc_ = q1(b, "RCASP");
+    if (rc_) {
+      const dr = txt(q1(rc_, "DocSpec") || rc_, "DocRefId") || "";
+      if (!dr.startsWith(tc + year)) add("L2", "DJP-L2-DOCREF", "error", xpathOf(rc_) + "/DocSpec/DocRefId", `DocRefId '${dr}' harus berawalan ${tc}${year}`, dr);
+      seenDoc.set(dr, (seenDoc.get(dr) || 0) + 1);
+      checkParty(q1(q1(rc_, "RCASP_ID") || rc_, "Entity") || q1(q1(rc_, "RCASP_ID") || rc_, "Individual"), dr, "RCASP");
+    }
+    for (const u of q(b, "CryptoUsers")) {
+      const ds = q1(u, "DocSpec"); const dr = ds ? txt(ds, "DocRefId") || "" : "";
+      const upath = xpathOf(u);
+      if (!dr.startsWith(tc + year)) add("L2", "DJP-L2-DOCREF", "error", upath + "/DocSpec/DocRefId", `DocRefId '${dr}' harus berawalan ${tc}${year}`, dr);
+      seenDoc.set(dr, (seenDoc.get(dr) || 0) + 1);
+      const uid = q1(u, "UserID"); const party = uid ? (q1(uid, "Individual") || q1(uid, "Entity")) : null;
+      if (party) checkParty(party, dr, "Pengguna");
+      // L3 controlling person only for entity
+      if (party && party.localName === "Individual" && q(u, "ControllingPerson").length) add("L3", "DJP-L3-CP", "error", upath + "/ControllingPerson", "ControllingPerson hanya untuk Pengguna Aset Kripto Entitas", dr);
+      // L3 duplicate user
+      if (party) { const key = q(party, "TIN").map(t => t.textContent.trim()).sort().join("|"); if (key) { if (seenUser.has(key)) add("L3", "DJP-L3-DUPUSER", "error", upath, `Pengguna dengan TIN ${key} sudah dilaporkan pada ${seenUser.get(key)} (satu CryptoUsers per pengguna per periode)`, dr); else seenUser.set(key, dr); } }
+      // transactions
+      const saldoDep = txt(u, "SaldoDeposit");
+      if (saldoDep !== null && !/^-?\d+\.\d{2}$/.test(saldoDep)) add("L2", "DJP-L2-SALDODEP", "warn", upath + "/SaldoDeposit", `SaldoDeposit '${saldoDep}' sebaiknya dua desimal; mata uang tidak dapat dinyatakan dalam skema saat ini`, dr);
+      for (const rt of q(u, "RelevantTransactions")) {
+        const asset = txt(rt, "CryptoAsset") || "";
+        const rpath = xpathOf(rt);
+        if (!DTI_MINI[asset]) add("L3", "DJP-L3-ASSET", "warn", rpath + "/CryptoAsset", `Nama aset '${asset}' tidak dikenali dalam daftar induk (DTI/ISO 24165); masuk antrean kurasi`, dr);
+        const sc = txt(rt, "SaldoCrypto");
+        if (sc !== null) { const k = dr + "|" + asset; const prev = saldoByUserAsset.get(k); if (prev !== undefined && prev !== sc) add("L3", "DJP-L3-SALDODUP", "error", rpath + "/SaldoCrypto", `SaldoCrypto untuk '${asset}' berbeda antar-blok (${prev} vs ${sc}); nilai harus sama`, dr); else saldoByUserAsset.set(k, sc); }
+        for (const cat of [...rt.children].filter(c => !["CryptoAsset", "SaldoCrypto"].includes(c.localName))) {
+          const cpath = xpathOf(cat);
+          const amt = q1(cat, "Amount");
+          if (amt) {
+            const v = amt.textContent.trim(); const cc = amt.getAttribute("currCode") || "";
+            if (!/^-?\d+\.\d{2}$/.test(v)) add("L2", "DJP-L2-AMOUNT", "error", cpath + "/Amount", `Amount '${v}' harus dua desimal`, dr);
+            if (!/^[A-Z]{3}$/.test(cc)) add("L2", "DJP-L2-CURR", "error", cpath + "/Amount/@currCode", `currCode '${cc}' bukan kode ISO 4217 tiga huruf`, dr);
+            if (cat.localName === "RRPT" && parseFloat(v) <= 50000 && cc === "USD") add("L2", "DJP-L2-RRPT", "warn", cpath + "/Amount", `RRPT bernilai ${v} ${cc}; ambang Reportable Retail Payment Transaction adalah di atas USD 50.000`, dr);
+          }
+          const nu = txt(cat, "NumberofUnits"); if (nu !== null && /\.\d{7,}$/.test(nu)) add("L2", "DJP-L2-UNITS", "error", cpath + "/NumberofUnits", `NumberofUnits '${nu}' melebihi enam desimal`, dr);
+          const nt = txt(cat, "NumberofTransactions"); if (nt !== null && !/^\d+$/.test(nt)) add("L2", "DJP-L2-NTX", "error", cpath + "/NumberofTransactions", `NumberofTransactions '${nt}' bukan bilangan bulat`, dr);
+        }
+      }
+    }
+  }
+  for (const [dr, n] of seenDoc) if (n > 1) add("L2", "DJP-L2-DOCREFDUP", "error", "//DocSpec/DocRefId", `DocRefId '${dr}' muncul ${n} kali; DocRefId harus unik dalam ruang dan waktu`, dr);
+  // ---- L4 reconciliation
+  for (const r of reconcile(doc)) {
+    if (r.opening < -1e-6) add("L4", "DJP-L4-OPENING", "warn", r.path, `${r.user} / ${r.asset}: saldo awal tersirat negatif (${r.opening.toFixed(6)}); arus bersih ${r.net.toFixed(6)} melebihi SaldoCrypto ${r.saldo.toFixed(6)}`, r.docref);
+    if (r.hasWallet && r.walletUsd >= 100000) add("L4", "DJP-L4-WALLET", "warn", r.path, `${r.user} / ${r.asset}: TransferWallet bernilai besar (${r.walletUsd.toFixed(2)})`, r.docref);
+  }
+  return F;
+
+  function checkParty(p, dr, role) {
+    if (!p) return;
+    const ppath = xpathOf(p);
+    const res = q(p, "ResCountryCode").map(e => e.textContent.trim());
+    for (const t of q(p, "TIN")) {
+      const v = t.textContent.trim(), iss = t.getAttribute("issuedBy") || "", unk = (t.getAttribute("unknown") || "").toLowerCase();
+      if (unk === "true" || unk === "t") { if (v !== "NOTIN") add("L2", "DJP-L2-NOTIN", "warn", xpathOf(t), `TIN ditandai unknown; nilai '${v}' akan diabaikan (gunakan NOTIN)`, dr); continue; }
+      if (iss && !res.includes(iss)) add("L2", "DJP-L2-TINISS", "error", xpathOf(t) + "/@issuedBy", `TIN issuedBy='${iss}' tidak termasuk ResCountryCode (${res.join(", ")})`, dr);
+      if (iss === "ID" && !/^\d{16}$/.test(v)) add("L2", "DJP-L2-NIK", "error", xpathOf(t), `TIN Indonesia '${v}' harus 16 digit (NIK tervalidasi / NPWP 16 digit)`, dr);
+      if (!iss) add("L2", "DJP-L2-TINISS", "warn", xpathOf(t), "TIN tanpa atribut issuedBy", dr);
+    }
+    for (const a of q(p, "Address")) { const city = txt(q1(a, "AddressFix") || a, "City"); if (!city) add("L2", "DJP-L2-CITY", "error", xpathOf(a) + "/AddressFix/City", `${role}: City wajib diisi`, dr); }
+    const bi = q1(p, "BirthInfo");
+    if (bi) { const bd = txt(bi, "BirthDate") || ""; const y = parseInt(bd.slice(0, 4)); if (!(y >= 1900 && y <= 2026)) add("L2", "DJP-L2-BIRTH", "error", xpathOf(bi) + "/BirthDate", `BirthDate '${bd}' tidak masuk akal`, dr); else if (y > 2008) add("L2", "DJP-L2-BIRTH", "warn", xpathOf(bi) + "/BirthDate", `BirthDate '${bd}': pengguna di bawah umur, periksa dokumen pembukaan akun`, dr); }
+  }
+}
+const IN = ["CryptoToCryptoIn", "CryptoFiatIn", "CryptoTransferIn"], OUT = ["CryptoToCryptoOut", "CryptoFiatOut", "CryptoTransferOut", "TransferWallet", "RRPT"];
+function reconcile(doc) {
+  const rows = new Map();
+  for (const u of [...doc.getElementsByTagName("*")].filter(e => e.localName === "CryptoUsers")) {
+    const ds = q1(u, "DocSpec"); const dr = ds ? txt(ds, "DocRefId") : "";
+    const uid = q1(u, "UserID"); const p = uid ? (q1(uid, "Individual") || q1(uid, "Entity")) : null;
+    let name = "?"; if (p) { const n = q1(p, "Name"); name = p.localName === "Entity" ? (n ? n.textContent.trim() : "?") : (n ? [txt(n, "FirstName"), txt(n, "LastName")].filter(Boolean).join(" ") : "?"); }
+    for (const rt of q(u, "RelevantTransactions")) {
+      const asset = txt(rt, "CryptoAsset") || "?"; const key = dr + "|" + asset;
+      if (!rows.has(key)) rows.set(key, { user: name, docref: dr, asset, inU: 0, outU: 0, saldo: null, hasWallet: false, walletUsd: 0, path: xpathOf(rt), blocks: 0 });
+      const r = rows.get(key); r.blocks++;
+      const sc = txt(rt, "SaldoCrypto"); if (sc !== null && r.saldo === null) r.saldo = parseFloat(sc);
+      for (const c of rt.children) {
+        const nu = parseFloat(txt(c, "NumberofUnits") || "0");
+        if (IN.includes(c.localName)) r.inU += nu; if (OUT.includes(c.localName)) r.outU += nu;
+        if (c.localName === "TransferWallet") { r.hasWallet = true; r.walletUsd += parseFloat(txt(c, "Amount") || "0"); }
+      }
+    }
+  }
+  return [...rows.values()].map(r => ({ ...r, net: r.inU - r.outU, saldo: r.saldo ?? 0, opening: (r.saldo ?? 0) - (r.inU - r.outU), hasSaldo: r.saldo !== null }));
+}
+
+// ============================================================
+// 3. Status message (OECD CARF Status Message structure, domestic variant)
+// ============================================================
+function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+function buildStatusMessage(doc, findings) {
+  const ms = q1(doc.documentElement, "MessageSpec");
+  const orig = ms ? txt(ms, "MessageRefId") : "(tidak ada)";
+  const period = ms ? txt(ms, "ReportingPeriod") : "";
+  const errs = findings.filter(f => f.sev === "error");
+  const fileErrs = errs.filter(f => !f.docref), recErrs = errs.filter(f => f.docref);
+  const status = errs.length ? "Rejected" : "Accepted";
+  const now = new Date().toISOString().slice(0, 19);
+  const grouped = {}; for (const f of recErrs) (grouped[f.docref] ||= []).push(f);
+  const warns = findings.filter(f => f.sev === "warn");
+  let x = `<?xml version="1.0" encoding="UTF-8"?>
+<csm:CARFStatusMessage_OECD xmlns:csm="urn:oecd:ties:carfstatusmessage:v1" xmlns:djp="urn:djp:carf:dom:v1" version="1.0">
+  <csm:MessageSpec>
+    <csm:TransmittingCountry>ID</csm:TransmittingCountry>
+    <csm:ReceivingCountry>ID</csm:ReceivingCountry>
+    <csm:MessageType>CARFMessageStatus</csm:MessageType>
+    <csm:MessageRefId>ID${(period || "2026").slice(0, 4)}ID-STATUS-${Date.now().toString(36).toUpperCase()}</csm:MessageRefId>
+    <csm:CorrMessageRefId>${esc(orig)}</csm:CorrMessageRefId>
+    <csm:ReportingPeriod>${esc(period)}</csm:ReportingPeriod>
+    <csm:Timestamp>${now}</csm:Timestamp>
+  </csm:MessageSpec>
+  <csm:CARFStatusMessage>
+    <csm:OriginalMessage>
+      <csm:OriginalMessageRefID>${esc(orig)}</csm:OriginalMessageRefID>
+      <csm:FileMetaData><csm:UncompressedFileSizeKBQty>${Math.ceil(new XMLSerializer().serializeToString(doc).length / 1024)}</csm:UncompressedFileSizeKBQty></csm:FileMetaData>
+    </csm:OriginalMessage>
+    <csm:ValidationErrors>
+`;
+  for (const f of fileErrs) x += `      <csm:FileError><csm:Code>${esc(f.code)}</csm:Code><csm:Details Language="ID">${esc(f.msg)}</csm:Details></csm:FileError>\n`;
+  for (const [dr, fs] of Object.entries(grouped)) {
+    for (const f of fs) x += `      <csm:RecordError><csm:Code>${esc(f.code)}</csm:Code><csm:Details Language="ID">${esc(f.msg)}</csm:Details><csm:DocRefIDInError>${esc(dr)}</csm:DocRefIDInError><csm:FieldsInError><csm:FieldPath>${esc(f.path)}</csm:FieldPath></csm:FieldsInError></csm:RecordError>\n`;
+  }
+  x += `    </csm:ValidationErrors>
+    <csm:ValidationResult>
+      <csm:Status>${status}</csm:Status>
+      <csm:ValidatedBy>DJP-CARF-Validator (demo, L0–L4)</csm:ValidatedBy>
+    </csm:ValidationResult>
+`;
+  if (warns.length) {
+    x += `    <!-- Ruang domestik yang diusulkan: peringatan tidak menolak berkas (L3 selektif dan L4) -->\n    <djp:Warnings>\n`;
+    for (const f of warns) x += `      <djp:Warning code="${esc(f.code)}" layer="${f.layer}"${f.docref ? ` docRefId="${esc(f.docref)}"` : ""}><djp:FieldPath>${esc(f.path)}</djp:FieldPath><djp:Details>${esc(f.msg)}</djp:Details></djp:Warning>\n`;
+    x += `    </djp:Warnings>\n`;
+  }
+  x += `  </csm:CARFStatusMessage>
+</csm:CARFStatusMessage_OECD>
+`;
+  return x;
+}
+
+// ============================================================
+// 4. Transformation: domestic → per-jurisdiction OECD messages + lineage
+// ============================================================
+function transform(doc) {
+  const root = doc.documentElement;
+  const ms = q1(root, "MessageSpec");
+  const year = (txt(ms, "ReportingPeriod") || "2026").slice(0, 4);
+  const bodies = q(root, "CARFBody");
+  const byCC = {}; const lineage = [];
+  const rcasp = bodies.map(b => q1(b, "RCASP")).find(Boolean);
+  const rcaspDoc = rcasp ? txt(q1(rcasp, "DocSpec"), "DocRefId") : "";
+  for (const b of bodies) for (const u of q(b, "CryptoUsers")) {
+    const uid = q1(u, "UserID"); const p = uid ? (q1(uid, "Individual") || q1(uid, "Entity")) : null; if (!p) continue;
+    const ccs = [...new Set(q(p, "ResCountryCode").map(e => e.textContent.trim()).filter(c => c !== "ID"))];
+    const dr = txt(q1(u, "DocSpec"), "DocRefId");
+    if (!ccs.length) { lineage.push({ dom: dr, cc: "ID (domestik saja)", intl: "—", user: partyName(p) }); continue; }
+    for (const cc of ccs) { (byCC[cc] ||= []).push(u); }
+  }
+  const msgs = [];
+  let seq = 1;
+  for (const [cc, users] of Object.entries(byCC)) {
+    const nd = doc.implementation.createDocument("urn:oecd:ties:carf:v1", "carf:CARF_OECD", null);
+    const r = nd.documentElement; r.setAttribute("xmlns:stf", "urn:oecd:ties:carfstf:v5"); r.setAttribute("version", "1.4");
+    const m2 = nd.importNode(ms, true); r.appendChild(m2);
+    for (const c of [...m2.children]) if (c.localName === "SendingEntityIN") m2.removeChild(c);
+    const msgRef = `ID${year}${cc}${String(seq).padStart(6, "0")}`;
+    setText(m2, "ReceivingCountry", cc); setText(m2, "MessageRefId", msgRef); setText(m2, "Timestamp", new Date().toISOString().slice(0, 19));
+    const body = nd.createElementNS("urn:oecd:ties:carf:v1", "carf:CARFBody"); r.appendChild(body);
+    const rc2 = nd.importNode(rcasp, true); body.appendChild(rc2);
+    const rcDoc = `ID${year}${cc}-R-${String(seq).padStart(4, "0")}`; setText(q1(rc2, "DocSpec"), "DocRefId", rcDoc);
+    lineage.push({ dom: rcaspDoc, cc, intl: rcDoc, user: "RCASP" });
+    users.forEach((u, i) => {
+      const u2 = nd.importNode(u, true); body.appendChild(u2);
+      for (const c of [...u2.children]) if (c.localName === "SaldoDeposit") u2.removeChild(c);
+      for (const rt of q(u2, "RelevantTransactions")) for (const c of [...rt.children]) if (c.localName === "SaldoCrypto") rt.removeChild(c);
+      const dr = txt(q1(u, "DocSpec"), "DocRefId"); const nd2 = `ID${year}${cc}-U-${String(seq).padStart(4, "0")}-${String(i + 1).padStart(3, "0")}`;
+      setText(q1(u2, "DocSpec"), "DocRefId", nd2);
+      const p = q1(q1(u, "UserID"), "Individual") || q1(q1(u, "UserID"), "Entity");
+      lineage.push({ dom: dr, cc, intl: nd2, user: partyName(p) });
+    });
+    const xml = '<?xml version="1.0" encoding="UTF-8"?>\n' + new XMLSerializer().serializeToString(nd);
+    msgs.push({ cc, msgRef, users: users.length, doc: nd, xml });
+    seq++;
+  }
+  return { msgs, lineage };
+}
+function setText(parent, name, v) { const e = q1(parent, name); if (e) e.textContent = v; }
+function partyName(p) { if (!p) return "?"; const n = q1(p, "Name"); if (!n) return "?"; return p.localName === "Entity" ? n.textContent.trim() : [txt(n, "FirstName"), txt(n, "LastName")].filter(Boolean).join(" "); }
+
+// ============================================================
+// 5. UI
+// ============================================================
+const $ = s => document.querySelector(s);
+document.querySelectorAll("nav.tabs button").forEach(b => b.addEventListener("click", () => {
+  document.querySelectorAll("nav.tabs button").forEach(x => x.classList.toggle("active", x === b));
+  document.querySelectorAll("section.panel").forEach(s => s.classList.toggle("active", s.id === b.dataset.tab));
+}));
+function pill(sev) { const m = { error: ["err", "tolak"], warn: ["warn", "peringatan"], info: ["info", "info"], ok: ["ok", "lolos"] }[sev]; return `<span class="pill ${m[0]}">${m[1]}</span>`; }
+function download(name, text) { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([text], { type: "application/xml" })); a.download = name; a.click(); }
+
+function renderSchemaTab() {
+  const o = state.schemas.oecd, d = state.schemas.dom;
+  $("#tbl-ident").innerHTML = `<tr><th></th><th>OECD v1.4</th><th>Domestik DJP</th></tr>
+    <tr><td>targetNamespace</td><td class="mono">${o.ns}</td><td class="mono">${d.ns}</td></tr>
+    <tr><td>version</td><td class="mono">${o.version}</td><td class="mono">${d.version}</td></tr>
+    <tr><td>complexType bernama</td><td class="mono">${Object.keys(o.types).length}</td><td class="mono">${Object.keys(d.types).length}</td></tr>
+    <tr><td>Ukuran berkas</td><td class="mono">${(o.text.length / 1024).toFixed(1)} KB</td><td class="mono">${(d.text.length / 1024).toFixed(1)} KB</td></tr>`;
+  const rows = [];
+  for (const [tn, ct] of Object.entries(d.types)) {
+    const dm = contentModel(ct, d); const om = o.types[tn] ? contentModel(o.types[tn], o) : { elements: {} };
+    for (const en of Object.keys(dm.elements)) if (!om.elements[en]) rows.push(`<tr><td class="mono">${tn}</td><td class="mono">${en}</td><td class="mono">${dm.elements[en].decl.getAttribute("type") || ""}</td><td class="mono">${dm.elements[en].min}..${dm.elements[en].max}</td></tr>`);
+  }
+  $("#tbl-added").innerHTML = `<tr><th>Tipe induk</th><th>Elemen</th><th>Tipe data</th><th>Kardinalitas</th></tr>` + (rows.join("") || "<tr><td colspan=4>Tidak ada perbedaan</td></tr>");
+  const snip = (text, typeName) => { const i = text.indexOf(`name="${typeName}"`); const start = text.lastIndexOf("<xsd:complexType", i); const end = text.indexOf("</xsd:sequence>", i); return text.slice(start, end + 15).split("\n").filter(l => !/<xsd:(annotation|documentation)/.test(l)); };
+  const render = (lines, maxLines) => lines.slice(0, maxLines).map(l => { const t = esc(l.replace(/^\t+/, m => "  ".repeat(m.length))); return /Saldo/.test(l) ? `<span class="add">${t}</span>` : t; }).join("\n");
+  $("#snip-users").innerHTML = render(snip(d.text, "CryptoUsers_Type"), 20);
+  const rtLines = snip(d.text, "RelevantTransactions_Type"); $("#snip-rt").innerHTML = render(rtLines.slice(0, 6), 6) + '\n<span class="ctx">  … (delapan kategori transaksi, masing-masing minOccurs=0 maxOccurs=unbounded)</span>';
+  // quick test
+  const s1 = parseXML(state.samples.s1);
+  const r = [["Skema domestik DJP", structuralCheck(s1, d)], ["Skema OECD v1.4", structuralCheck(s1, o)]];
+  $("#quick-test").innerHTML = r.map(([n, f]) => `<div class="card"><h4>${n}</h4><div class="verdict ${f.length ? "rej" : "acc"}">${f.length ? `TIDAK VALID — ${f.length} kesalahan struktur` : "VALID — tidak ada kesalahan struktur"}</div>${f.length ? `<table>${f.slice(0, 6).map(x => `<tr><td class="mono">${esc(x.path)}</td><td>${esc(x.msg)}</td></tr>`).join("")}${f.length > 6 ? `<tr><td colspan=2 class="small">… ${f.length - 6} lainnya</td></tr>` : ""}</table>` : `<p class="small">Berkas yang sama, skema yang berbeda. Seluruh ${[...s1.getElementsByTagName("*")].length} elemen dikenali.</p>`}</div>`).join("");
+}
+
+function runValidation() {
+  if (!state.active) return;
+  const doc = parseXML(state.active);
+  const F = [];
+  for (const [lbl, sch] of [["domestik", state.schemas.dom]]) for (const f of structuralCheck(doc, sch)) F.push({ layer: "L1", ...f, docref: null });
+  // attach docref to L1 errors where possible
+  for (const f of F) { const m = f.path.match(/CryptoUsers(\[\d+\])?/); if (m) { const idx = m[1] ? parseInt(m[1].slice(1, -1)) : 1; const u = [...doc.getElementsByTagName("*")].filter(e => e.localName === "CryptoUsers")[idx - 1]; if (u) { const ds = q1(u, "DocSpec"); f.docref = ds ? txt(ds, "DocRefId") : null; } } }
+  F.push(...runRules(doc, state.activeName));
+  // OECD check of the untransformed file: informational, shows the dual-schema problem
+  const oecdErrs = structuralCheck(doc, state.schemas.oecd).filter(f => /Saldo/.test(f.msg));
+  if (oecdErrs.length) F.push({ layer: "L1", code: "DJP-L1-OECD-INFO", sev: "info", path: "/", msg: `Berkas ini memuat ${oecdErrs.length} elemen domestik (Saldo*) yang akan ditolak skema OECD v1.4; transformasi wajib dilakukan sebelum pengiriman ke CTS (lihat tab 4)`, docref: null });
+  state.findings = F;
+  const order = { L0: 0, L1: 1, L2: 2, L3: 3, L4: 4 };
+  F.sort((a, b) => order[a.layer] - order[b.layer]);
+  const errs = F.filter(f => f.sev === "error").length, warns = F.filter(f => f.sev === "warn").length;
+  const firstFail = ["L0", "L1", "L2", "L3"].find(L => F.some(f => f.layer === L && f.sev === "error"));
+  $("#verdict").innerHTML = `<div class="verdict ${errs ? "rej" : "acc"}">${errs ? `DITOLAK — ${errs} kesalahan (lapis pertama yang gagal: ${firstFail}). Dalam produksi, pemrosesan berhenti pada lapis itu; di sini semua lapis dijalankan agar terlihat lengkap.` : `DITERIMA — tidak ada kesalahan yang menolak berkas${warns ? `; ${warns} peringatan diteruskan ke PJAK dan unit pengawasan` : ""}.`}</div>`;
+  $("#summary").innerHTML = ["L0", "L1", "L2", "L3", "L4"].map(L => { const e = F.filter(f => f.layer === L && f.sev === "error").length, w = F.filter(f => f.layer === L && f.sev === "warn").length; return `<div class="box ${e ? "err" : w ? "warn" : "ok"}"><div class="n">${e ? e : w ? w : "✓"}</div><div class="l">${L} — ${{ L0: "transport & integritas", L1: "struktur skema", L2: "aturan bisnis", L3: "antar-rekaman", L4: "kewajaran analitik" }[L]}${e ? ` · ${e} tolak` : ""}${w ? ` · ${w} peringatan` : ""}</div></div>`; }).join("");
+  $("#layers").innerHTML = ["L0", "L1", "L2", "L3", "L4"].map(L => { const fs = F.filter(f => f.layer === L); return `<div class="layer ${fs.some(f => f.sev !== "info") ? "open" : ""}"><header><span class="t">${L} · ${fs.length} temuan</span><span>${fs.some(f => f.sev === "error") ? pill("error") : fs.some(f => f.sev === "warn") ? pill("warn") : pill("ok")}</span></header><div class="body">${fs.length ? `<table><tr><th>Status</th><th>Kode</th><th>FieldPath</th><th>Keterangan</th><th>DocRefId</th></tr>${fs.map(f => `<tr><td>${pill(f.sev)}</td><td class="mono">${esc(f.code)}</td><td class="mono">${esc(f.path)}</td><td>${esc(f.msg)}</td><td class="mono">${esc(f.docref || "—")}</td></tr>`).join("")}</table>` : `<p class="small" style="margin:10px 0 0">Tidak ada temuan.</p>`}</div></div>`; }).join("");
+  document.querySelectorAll(".layer header").forEach(h => h.onclick = () => h.parentElement.classList.toggle("open"));
+  // status message
+  const sm = buildStatusMessage(doc, F);
+  state.statusXml = sm; $("#status-xml").textContent = sm; $("#status-note").textContent = `${errs ? "Rejected" : "Accepted"} · ${F.filter(f => f.sev === "error" && !f.docref).length} FileError · ${F.filter(f => f.sev === "error" && f.docref).length} RecordError · ${warns} peringatan domestik`;
+  renderRekon(doc);
+  $("#tf-note").textContent = ""; $("#tbl-msgs").innerHTML = ""; $("#tbl-lineage").innerHTML = ""; $("#fan").innerHTML = ""; $("#tf-downloads").innerHTML = ""; $("#corr-out").innerHTML = "";
+}
+
+function renderRekon(doc) {
+  const rows = reconcile(doc);
+  $("#tbl-rekon").innerHTML = `<tr><th>Pengguna</th><th>Aset</th><th>Blok</th><th>Unit masuk</th><th>Unit keluar</th><th>Arus bersih</th><th>SaldoCrypto</th><th>Saldo awal tersirat</th><th></th></tr>` + rows.map(r => `<tr><td>${esc(r.user)}</td><td>${esc(r.asset)}</td><td>${r.blocks}</td><td class="mono">${r.inU.toFixed(6)}</td><td class="mono">${r.outU.toFixed(6)}</td><td class="mono">${r.net.toFixed(6)}</td><td class="mono">${r.hasSaldo ? r.saldo.toFixed(6) : "—"}</td><td class="mono">${r.hasSaldo ? r.opening.toFixed(6) : "—"}</td><td>${!r.hasSaldo ? pill("info") : r.opening < -1e-6 ? pill("warn") : pill("ok")}</td></tr>`).join("") || "<tr><td colspan=9>Tidak ada transaksi (laporan nihil).</td></tr>";
+  $("#chart-rekon").innerHTML = svgBars(rows);
+}
+
+
+function svgBars(rows) {
+  if (!rows.length) return '<p class="small">Tidak ada transaksi untuk digambar.</p>';
+  const rowH = 58, W = 980, left = 250, barW = 600, top = 28;
+  const H = top + rows.length * rowH + 20;
+  let s = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block" font-family="IBM Plex Sans,system-ui,sans-serif">`;
+  s += `<g font-size="12" fill="#4a5a70"><rect x="${left}" y="6" width="12" height="12" fill="#2b7a4b"/><text x="${left + 18}" y="17">unit masuk</text><rect x="${left + 110}" y="6" width="12" height="12" fill="#b23a3a"/><text x="${left + 128}" y="17">unit keluar</text><rect x="${left + 230}" y="6" width="12" height="12" fill="#e3a81c"/><text x="${left + 248}" y="17">SaldoCrypto akhir tahun</text></g>`;
+  rows.forEach((r, i) => {
+    const y = top + i * rowH; const mx = Math.max(r.inU, r.outU, r.hasSaldo ? r.saldo : 0, 1e-9);
+    const bar = (v, dy, color, label) => { const w = Math.max(1, (v / mx) * barW); return `<rect x="${left}" y="${y + dy}" width="${w.toFixed(1)}" height="12" fill="${color}" rx="2"/><text x="${left + w + 6}" y="${y + dy + 10}" font-size="11" font-family="IBM Plex Mono,monospace" fill="#1b2a41">${label}</text>`; };
+    s += `<text x="0" y="${y + 14}" font-size="13" font-weight="600" fill="#1b2a41">${esc(r.user)}</text><text x="0" y="${y + 30}" font-size="12" fill="#4a5a70">${esc(r.asset)} · ${r.blocks} blok</text>`;
+    s += bar(r.inU, 4, "#2b7a4b", r.inU.toFixed(6)) + bar(r.outU, 20, "#b23a3a", r.outU.toFixed(6));
+    s += r.hasSaldo ? bar(r.saldo, 36, "#e3a81c", r.saldo.toFixed(6) + (r.opening < -1e-6 ? "  ⚠ saldo awal tersirat negatif" : "")) : `<text x="${left}" y="${y + 46}" font-size="11" fill="#4a5a70">SaldoCrypto tidak dilaporkan</text>`;
+    s += `<line x1="0" y1="${y + rowH - 4}" x2="${W}" y2="${y + rowH - 4}" stroke="#eef1f5"/>`;
+  });
+  return s + "</svg>";
+}
+
+function runTransform() {
+  if (!state.active) return;
+  const doc = parseXML(state.active);
+  const { msgs, lineage } = transform(doc);
+  state.transformed = msgs;
+  $("#tf-note").textContent = msgs.length ? `${msgs.length} pesan internasional dibentuk; setiap pesan diperiksa ulang terhadap skema OECD v1.4.` : "Tidak ada pengguna berdomisili luar negeri; tidak ada pesan internasional (hanya pelaporan domestik).";
+  $("#tbl-msgs").innerHTML = `<tr><th>Negara tujuan</th><th>MessageRefId</th><th>Pengguna</th><th>Cek OECD v1.4</th></tr>` + msgs.map(m => { const f = structuralCheck(m.doc, state.schemas.oecd); return `<tr><td>${m.cc}</td><td class="mono">${m.msgRef}</td><td>${m.users}</td><td>${f.length ? pill("error") + ` ${f.length}` : pill("ok")}</td></tr>`; }).join("");
+  $("#tf-downloads").innerHTML = msgs.map((m, i) => `<a class="dl" href="#" data-i="${i}">Unduh ${m.msgRef}.xml</a>`).join("");
+  $("#tf-downloads").querySelectorAll("a").forEach(a => a.onclick = e => { e.preventDefault(); const m = msgs[a.dataset.i]; download(m.msgRef + ".xml", m.xml); });
+  $("#tbl-lineage").innerHTML = `<tr><th>DocRefId domestik</th><th>Pengguna</th><th>Yurisdiksi</th><th>DocRefId internasional</th></tr>` + lineage.map(l => `<tr><td class="mono">${esc(l.dom)}</td><td>${esc(l.user)}</td><td>${l.cc}</td><td class="mono">${esc(l.intl)}</td></tr>`).join("");
+  // fan-out svg
+  const total = [...doc.getElementsByTagName("*")].filter(e => e.localName === "CryptoUsers").length;
+  const domOnly = lineage.filter(l => l.intl === "—").length;
+  const targets = [...msgs.map(m => ({ label: `CTS → ${m.cc}`, sub: `${m.users} pengguna · ${m.msgRef}`, color: "#1f3a5f" })), { label: "Hanya domestik (DJP)", sub: `${domOnly} pengguna · tidak dipertukarkan`, color: "#8a6200" }];
+  const h = Math.max(300, 70 * targets.length + 60); $("#fan").setAttribute("viewBox", `0 0 960 ${h}`);
+  let svg = `<rect x="30" y="${h / 2 - 40}" width="260" height="80" rx="10" fill="#f4f6f9" stroke="#d9dee7"/><text x="160" y="${h / 2 - 10}" text-anchor="middle" font-size="15" font-weight="600" fill="#1b2a41">Berkas domestik PJAK</text><text x="160" y="${h / 2 + 14}" text-anchor="middle" font-size="12" fill="#4a5a70">${total} CryptoUsers · Saldo* disertakan</text><text x="160" y="${h / 2 + 32}" text-anchor="middle" font-size="11" font-family="IBM Plex Mono,monospace" fill="#4a5a70">${esc(txt(q1(doc.documentElement, "MessageSpec"), "MessageRefId") || "")}</text>`;
+  svg += `<rect x="400" y="${h / 2 - 28}" width="170" height="56" rx="28" fill="#fff4d6" stroke="#e3a81c"/><text x="485" y="${h / 2 - 4}" text-anchor="middle" font-size="13" font-weight="600" fill="#8a6200">Transformasi</text><text x="485" y="${h / 2 + 14}" text-anchor="middle" font-size="11" fill="#8a6200">strip Saldo* · pecah per CC</text>`;
+  svg += `<path d="M290 ${h / 2} L400 ${h / 2}" stroke="#4a5a70" stroke-width="2" fill="none"/>`;
+  targets.forEach((t, i) => { const y = 40 + i * 70 + 30; svg += `<path d="M570 ${h / 2} C 640 ${h / 2}, 640 ${y}, 700 ${y}" stroke="${t.color}" stroke-width="2" fill="none"/><rect x="700" y="${y - 26}" width="230" height="52" rx="10" fill="#fff" stroke="${t.color}"/><text x="715" y="${y - 5}" font-size="14" font-weight="600" fill="${t.color}">${esc(t.label)}</text><text x="715" y="${y + 14}" font-size="11" fill="#4a5a70">${esc(t.sub)}</text>`; });
+  $("#fan").innerHTML = svg;
+  // correction selector
+  const users = lineage.filter(l => l.user !== "RCASP").reduce((a, l) => { (a[l.dom] ||= { user: l.user, ccs: [] }).ccs.push(l.cc); return a; }, {});
+  $("#sel-corr").innerHTML = Object.entries(users).map(([dr, u]) => `<option value="${esc(dr)}">${esc(u.user)} — ${esc(dr)}</option>`).join("");
+  $("#btn-corr").onclick = () => {
+    const dr = $("#sel-corr").value; const rows = lineage.filter(l => l.dom === dr);
+    const intl = rows.filter(l => l.intl !== "—");
+    let html = `<div class="card"><h4>Koreksi rekaman ${esc(dr)} (${esc(rows[0].user)})</h4><table><tr><th>Pesan</th><th>MessageTypeIndic</th><th>Rekaman</th><th>DocTypeIndic</th><th>DocRefId baru</th><th>CorrDocRefId</th></tr>`;
+    html += `<tr><td>Domestik (PJAK → DJP)</td><td class="mono">CARF702</td><td>RCASP</td><td class="mono">OECD0 (kirim ulang)</td><td class="mono">${esc(lineage.find(l => l.user === "RCASP")?.dom || "ID2026…-R-…")}</td><td>—</td></tr>`;
+    html += `<tr><td></td><td></td><td>${esc(rows[0].user)}</td><td class="mono">OECD2 (koreksi)</td><td class="mono">${esc(dr)}-C1</td><td class="mono">${esc(dr)}</td></tr>`;
+    for (const l of intl) { html += `<tr><td>Internasional (DJP → ${l.cc})</td><td class="mono">CARF702</td><td>RCASP</td><td class="mono">OECD0</td><td class="mono">${esc(lineage.find(x => x.user === "RCASP" && x.cc === l.cc)?.intl || "")}</td><td>—</td></tr><tr><td></td><td></td><td>${esc(l.user)}</td><td class="mono">OECD2</td><td class="mono">${esc(l.intl)}-C1</td><td class="mono">${esc(l.intl)}</td></tr>`; }
+    if (!intl.length) html += `<tr><td colspan=6 class="small">Pengguna hanya berdomisili di Indonesia: tidak ada pesan internasional yang perlu dikoreksi.</td></tr>`;
+    html += `</table><p class="small" style="margin:10px 0 0">Setiap koreksi memakai DocRefId baru dan CorrDocRefId yang menunjuk versi terakhir yang pernah dikirim; koreksi berikutnya harus menunjuk ke "-C1", bukan ke DocRefId asal. Registri silsilah memastikan ${intl.length} pesan internasional ikut dikoreksi.</p></div>`;
+    $("#corr-out").innerHTML = html;
+  };
+}
+
+async function init() {
+  const [o, d] = await Promise.all([loadText(FILES.oecd.path, FILES.oecd.emb), loadText(FILES.dom.path, FILES.dom.emb)]);
+  state.schemas.oecd = buildSchema(o, "OECD v1.4"); state.schemas.dom = buildSchema(d, "domestik DJP");
+  for (const s of SAMPLES) state.samples[s.id] = await loadText(s.path, s.emb);
+  $("#st-oecd").textContent = `${state.schemas.oecd.ns} · v${state.schemas.oecd.version}`;
+  $("#st-dom").textContent = `${state.schemas.dom.ns} · v${state.schemas.dom.version}`;
+  $("#st-samples").textContent = `${SAMPLES.length} berkas`;
+  $("#st-src").textContent = state.source;
+  $("#sel-sample").innerHTML = SAMPLES.map(s => `<option value="${s.id}">${esc(s.name)}</option>`).join("");
+  const pick = id => { const s = SAMPLES.find(x => x.id === id); state.active = state.samples[id]; state.activeName = s.path.split("/").pop(); $("#file-label").textContent = "Berkas aktif: " + state.activeName; };
+  pick("s1");
+  $("#sel-sample").onchange = e => { pick(e.target.value); runValidation(); };
+  $("#file-in").onchange = e => { const f = e.target.files[0]; if (!f) return; f.text().then(t => { state.active = t; state.activeName = f.name; $("#file-label").textContent = "Berkas aktif: " + f.name + " (unggahan)"; runValidation(); }); };
+  $("#btn-run").onclick = runValidation;
+  $("#btn-transform").onclick = runTransform;
+  $("#btn-dl-status").onclick = () => state.statusXml && download("CARFStatusMessage_" + state.activeName, state.statusXml);
+  renderSchemaTab();
+  runValidation();
+}
+init().catch(e => { document.querySelector(".status-card").innerHTML = `<b style="color:#b23a3a">Gagal memuat:</b> ${esc(e.message)}`; console.error(e); });
+</script>
+</body>
+</html>
